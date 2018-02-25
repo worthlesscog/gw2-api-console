@@ -87,12 +87,12 @@ object Utils {
     def isNumeric(s: String) = s forall { _.isDigit }
 
     def load() = {
-        if (config.token nonEmpty) {
-            accountAchievements = loader.downloadAuthenticatedBlobs(AccountAchievements)
-            accountDyes = loader.downloadAuthenticatedIds(AccountDyes)
-            accountMinis = loader.downloadAuthenticatedIds(AccountMinis)
-            accountRecipes = loader.downloadAuthenticatedIds(AccountRecipes)
-            accountSkins = loader.downloadAuthenticatedIds(AccountSkins)
+        config.token foreach { t =>
+            accountAchievements = loader.downloadAuthenticatedBlobs(AccountAchievements, t)
+            accountDyes = loader.downloadAuthenticatedIds(AccountDyes, t)
+            accountMinis = loader.downloadAuthenticatedIds(AccountMinis, t)
+            accountRecipes = loader.downloadAuthenticatedIds(AccountRecipes, t)
+            accountSkins = loader.downloadAuthenticatedIds(AccountSkins, t)
         }
 
         achievementCategories = home.resolve(ACHIEVEMENT_CATEGORIES) |> loader.loadPersistentMap(AchievementCategories)

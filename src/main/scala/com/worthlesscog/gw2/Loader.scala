@@ -13,18 +13,15 @@ class Loader {
 
     val user_agent = """Mozilla/5.0 (Windows NT 6.1; WOW64; rv:43.0) Gecko/20100101 Firefox/43.0"""
 
-    def downloadAuthenticatedBlobs[K, V <: Id[K]](c: BlobCatalog[K, V]) =
-        config.token.fold(Map.empty[K, V]) { t =>
-            s"  Downloading ${c.name}...\n" |> info
-            val l = authenticatedUrl(c.url, t) |> downloadJson map c.bulkConvert
-            l.fold(Map.empty[K, V]) { _.map { t => t.id -> t } toMap }
-        }
+    def downloadAuthenticatedBlobs[K, V <: Id[K]](c: BlobCatalog[K, V], token: String) = {
+        s"  Downloading ${c.name}...\n" |> info
+        val l = authenticatedUrl(c.url, token) |> downloadJson map c.bulkConvert
+        l.fold(Map.empty[K, V]) { _.map { v => v.id -> v } toMap }
+    }
 
-    def downloadAuthenticatedIds[K](c: IdCatalog[K]) = {
-        config.token.fold(Set.empty[K]) {
-            s"  Downloading ${c.name}...\n" |> info
-            authenticatedUrl(c.url, _) |> downloadIds(c)
-        }
+    def downloadAuthenticatedIds[K](c: IdCatalog[K], token: String) = {
+        s"  Downloading ${c.name}...\n" |> info
+        authenticatedUrl(c.url, token) |> downloadIds(c)
     }
 
     def downloadIds[K](c: IdCatalog[K])(url: String) =
@@ -46,27 +43,29 @@ class Loader {
                 None
         }
 
-    def downloadMap[K, T <: Id[K]](c: MapCatalog[K, T]): Map[K, T] = {
+    def downloadMap[K, V <: Id[K]](c: MapCatalog[K, V]): Map[K, V] = {
         val l = c.url |> downloadIds(c)
         s"  Downloading ${l.size} ${c.name}...\n" |> info
         downloadMap(l, c)
     }
 
-    def downloadMap[K, T <: Id[K]](ids: Iterable[K], c: MapCatalog[K, T]): Map[K, T] = {
+    def downloadMap[K, V <: Id[K]](ids: Iterable[K], c: MapCatalog[K, V]): Map[K, V] = {
         val i = ids.grouped(c.chunks) flatMap {
             c.bulkUrl(_) |> downloadJson map c.bulkConvert
         } flatten
 
-        i map { t => t.id -> t } toMap
+        i map { v => v.id -> v } toMap
     }
 
-    def loadPersistentMap[K, T <: Id[K]](c: PersistentMapCatalog[K, T])(p: Path) =
+    def downloadPersistentMap[K, V <: Id[K]](c: PersistentMapCatalog[K, V])(p: Path) =
+        downloadMap(c) |> saveObject(p)
+
+    def loadPersistentMap[K, V <: Id[K]](c: PersistentMapCatalog[K, V])(p: Path) =
         if (Files.exists(p)) {
             s"  Loading ${c.name}...\n" |> info
             using(p |> ois) { c.read }
-        } else {
-            downloadMap(c) |> saveObject(p)
-        }
+        } else
+            downloadPersistentMap(c)(p)
 
     def loadStream(s: InputStream): Array[Byte] =
         Stream.continually(s.read) takeWhile { -1 != } map { _.toByte } toArray
