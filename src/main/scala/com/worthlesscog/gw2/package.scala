@@ -43,7 +43,6 @@ package object gw2 {
         new TokenCommand,
         new UnlockedCommand,
         new UpdateCommand,
-        new InvisibleCommand,
         new WeaponsCommand)
 
     lazy val config = new Config(home)
