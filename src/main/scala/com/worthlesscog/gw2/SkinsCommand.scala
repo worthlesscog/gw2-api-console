@@ -1,12 +1,12 @@
 package com.worthlesscog.gw2
 
-import Utils.{ asString, byName, dumpAndTally, dumpCollections, notFlagged }
+import Utils.{ asString, byName, dumpAndTally, dumpCollections, notFlagged, ticked, toCollections }
 
 class SkinsCommand extends FlagNameTypeMap[Skin]("skins") {
 
     def execute(cmd: List[String]) = cmd match {
         case "collections" :: Nil =>
-            skins |> dumpCollections(accountSkins)
+            skins |> toCollections |> dumpCollections(ticked(accountSkins))
 
         case "invisible" :: Nil =>
             skins |> notFlagged("ShowInWardrobe") |> dumpAndTally(byName, asString)

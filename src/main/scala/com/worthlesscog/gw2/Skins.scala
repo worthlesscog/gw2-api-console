@@ -2,7 +2,7 @@ package com.worthlesscog.gw2
 
 import scala.language.postfixOps
 
-import Utils.{ noneOrSorted, noneOrString }
+import Utils.{ noneOrSorted, noneOrString, noneOrStrings, splitAndBar }
 import spray.json.{ DefaultJsonProtocol, JsString, JsValue, NullOptions, RootJsonFormat, pimpAny }
 
 trait Skin extends FlagNameTypeAndMap with Collected[Skin] with Id[Int] {
@@ -47,13 +47,31 @@ case class ArmorSkin(
 
     // XXX - :/
     def inCollection(s: String) = copy(collection = Some(s))
+
+    override def toMap = super.toMap ++ details.toMap
 }
 
-case class ArmorSkinDetails(`type`: String, weight_class: String, dye_slots: Option[DyeSlots]) extends Details
+case class ArmorSkinDetails(`type`: String, weight_class: String, dye_slots: Option[DyeSlots]) extends Details with Mappable {
 
-case class DyeSlots(`default`: List[Option[ColorMaterial]], overrides: Map[String, List[Option[ColorMaterial]]])
+    def ds = dye_slots.fold(Map("dye_slots" -> "None"))(_.toMap)
 
-case class ColorMaterial(color_id: Int, material: String)
+    def toMap = Map(
+        "armor_type" -> `type`,
+        "weight_class" -> weight_class) ++ ds
+}
+
+case class DyeSlots(`default`: List[Option[ColorMaterial]], overrides: Map[String, List[Option[ColorMaterial]]]) extends Mappable {
+
+    def orides = overrides map { case (k, v) => ("dye_slot_override_" + splitAndBar(k)) -> noneOrStrings(v) }
+
+    def toMap = Map(
+        "dye_slot_defaults" -> noneOrStrings(`default`)) ++ orides
+}
+
+case class ColorMaterial(color_id: Int, material: String) {
+
+    override def toString = s"color_id $color_id / material $material"
+}
 
 case class BackSkin(
         id: Int,
