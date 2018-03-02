@@ -31,6 +31,10 @@ trait Id[T] {
     def id: T
 }
 
+trait Itemized {
+    def item: Option[Int]
+}
+
 trait Mappable {
     def toMap: Map[String, String]
 }
@@ -39,17 +43,12 @@ trait Named {
     def name: String
 }
 
-trait Priced {
+trait Priced[T] {
     def buy: Option[Int]
     def sell: Option[Int]
+    def withPrices(buy: Option[Int], sell: Option[Int]): T
 }
 
 trait Typed {
     def `type`: String
-}
-
-trait IdContains[T] extends Id[T] {
-    def exec() = {
-
-    }
 }

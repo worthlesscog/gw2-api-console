@@ -31,6 +31,9 @@ object Utils {
 
     def cmpRight(a: (_, String), b: (_, String)) = a._2 < b._2
 
+    def collectable[K, V <: Collected[V]](m: Map[K, V]) =
+        m filter { case (_, v) => v.collection.nonEmpty }
+
     def collectionOf(achievements: Map[Int, Achievement], collectionType: String) =
         achievements.values filter { a =>
             a.`type` == "ItemSet" && a.bits.nonEmpty && a.bits.forall { b =>
@@ -55,13 +58,12 @@ object Utils {
         f"${m.size}%d row(s)\n" |> info
     }
 
-    def dumpCollections[V <: Collected[V] with Id[Int] with Named](set: Set[Int])(m: Map[Int, V]) = {
-        val grouped = m.values filter { _.collection.nonEmpty } groupBy { _.collection.get }
-        val sorted = SortedMap[String, Iterable[V]]() ++ grouped
+    def dumpCollections[V <: Collected[V] with Id[Int] with Named](f: V => String)(m: Map[String, Iterable[V]]) = {
+        val sorted = SortedMap[String, Iterable[V]]() ++ m
         sorted foreach {
             case (c, vs) =>
                 s"$c\n" |> info
-                (vs map { v => v.id -> v } toMap) |> dump(byName, ticked(set))
+                (vs map { v => v.id -> v } toMap) |> dump(byName, f)
         }
     }
 
@@ -135,10 +137,13 @@ object Utils {
         o.fold("None") { _.mkString(", ") }
 
     def noneOrSorted(s: Set[_]) =
-        if (s isEmpty) "None" else (s map { _.toString } toList).sorted mkString (", ")
+        if (s isEmpty) "None" else (s map { _.toString } toList).sorted mkString ", "
 
     def noneOrString(o: Option[_]) =
         o.fold("None") { _.toString }
+
+    def noneOrStrings(os: Traversable[Option[_]]) =
+        os.map { noneOrString(_) } mkString ", "
 
     def notFlagged[K, V <: Flagged](f: String)(m: Map[K, V]) =
         m filter { case (_, r) => !(r.flags contains f) }
@@ -159,8 +164,23 @@ object Utils {
     def optLabelledFloat(o: Option[Float], l: String) =
         o.fold(None: Option[String]) { f => Some(l + " " + f) }
 
+    def optSellPrice[T <: Priced[T]](t: T) =
+        t.sell.fold("")(", " + toStringPrice(_))
+
     def presentIn[K, V](s: Set[K])(m: Map[K, V]) =
         m filter { case (k, _) => s contains k }
+
+    def reprice[T <: Id[Int] with Itemized with Priced[T]](m: Map[Int, T]) = {
+        val byItem = m flatMap { case (_, c) => c.item.map { _ -> c } }
+        val prices = byItem.keys |> Commerce.prices
+        prices.foldLeft(m) { (m, ip) =>
+            ip match {
+                case (i, p) =>
+                    val nc = byItem(i)
+                    m + (nc.id -> (nc |> updatePrice(p)))
+            }
+        }
+    }
 
     def saveObject[A](p: Path)(a: A): A = {
         using(p |> oos) { _.writeObject(a) }
@@ -172,10 +192,20 @@ object Utils {
         case _         => None
     }
 
+    def splitAndBar(s: String) = s split ("(?=\\p{Upper})") map (_.toLowerCase) mkString "_"
+
+    def tickedAndPriced[T <: Id[Int] with Named with Priced[T]](s: Set[Int])(c: T): String = {
+        val (state, price) = if (s contains c.id) (TICK, "") else (" ", optSellPrice(c))
+        s"$state  ${c.name}$price"
+    }
+
     def ticked[T <: Id[Int] with Named](s: Set[Int])(c: T): String = {
         val state = if (s contains c.id) TICK else " "
         s"$state  ${c.name}"
     }
+
+    def toCollections[T <: Collected[T]](m: Map[_, T]) =
+        m.values filter { _.collection.nonEmpty } groupBy { _.collection.get }
 
     def toStringPrice(i: Int) = {
         val (g, s, c) = (i / 10000, i / 100 % 100, i % 100)
@@ -195,6 +225,7 @@ object Utils {
                 _.foldLeft(m) {
                     case (m, MinipetProgress(_, Some(id))) => m + (id -> m(id).inCollection(a.name))
                     case (m, SkinProgress(_, Some(id)))    => m + (id -> m(id).inCollection(a.name))
+                    case _                                 => m
                 }
             }
         }
@@ -206,6 +237,9 @@ object Utils {
             }
         }
     }
+
+    def updatePrice[T <: Priced[T]](p: Price)(c: T) =
+        c.withPrices(Some(p.buys.fold(0)(_.unit_price)), Some(p.sells.fold(0)(_.unit_price)))
 
     def using[A <: { def close(): Unit }, B](closeable: A)(f: A => B): B =
         try { f(closeable) } finally { closeable.close() }

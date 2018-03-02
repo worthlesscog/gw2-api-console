@@ -10,9 +10,13 @@ case class Mini(
         icon: String,
         order: Int,
         item_id: Int,
-        collection: Option[String]) extends Collected[Mini] with Id[Int] with Mappable with Named {
+        collection: Option[String],
+        buy: Option[Int],
+        sell: Option[Int]) extends Collected[Mini] with Id[Int] with Itemized with Mappable with Named with Priced[Mini] {
 
     def inCollection(s: String) = copy(collection = Some(s))
+
+    def item = Some(item_id)
 
     def toMap = Map(
         "id" -> id.toString,
@@ -24,11 +28,15 @@ case class Mini(
         "set" -> noneOrString(collection))
 
     override def toString = name
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
+
 }
 
 object MiniProtocols extends DefaultJsonProtocol {
 
-    implicit val fmtMini = jsonFormat7(Mini)
+    implicit val fmtMini = jsonFormat9(Mini)
 
 }
 

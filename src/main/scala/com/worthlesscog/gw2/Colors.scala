@@ -14,7 +14,7 @@ case class Color(
         categories: Set[String],
         collection: Option[String],
         buy: Option[Int],
-        sell: Option[Int]) extends Categorized with Collected[Color] with Id[Int] with Mappable with Named with Priced {
+        sell: Option[Int]) extends Categorized with Collected[Color] with Id[Int] with Itemized with Mappable with Named with Priced[Color] {
 
     def inCollection(s: String) = copy(collection = Some(s))
 
@@ -29,7 +29,11 @@ case class Color(
         "metal" -> metal.toString,
         "collection" -> noneOrString(collection))
 
-    override def toString = s"$name"
+    override def toString = name
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
+
 }
 
 case class ColorDetails(brightness: Int, contrast: Float, hue: Int, saturation: Float, lightness: Float, rgb: List[Int]) {
