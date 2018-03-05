@@ -22,6 +22,7 @@ package object gw2 {
     val MINIS = "gw2-minis.dat"
     val RECIPES = "gw2-recipes.dat"
     val SKINS = "gw2-skins.dat"
+    val TITLES = "gw2-titles.dat"
 
     val SETTINGS = ".gw2-api-console.settings"
     val TICK = "*"
@@ -40,6 +41,7 @@ package object gw2 {
         new PetsCommand,
         new RecipesCommand,
         new SkinsCommand,
+        new TitlesCommand,
         new TokenCommand,
         new UnlockedCommand,
         new UpdateCommand,
@@ -56,6 +58,7 @@ package object gw2 {
     var accountMinis = Set.empty[Int]
     var accountRecipes = Set.empty[Int]
     var accountSkins = Set.empty[Int]
+    var accountTitles = Set.empty[Int]
 
     var achievementCategories = Map.empty[Int, AchievementCategory]
     var achievementGroups = Map.empty[String, AchievementGroup]
@@ -67,6 +70,7 @@ package object gw2 {
     var minis = Map.empty[Int, Mini]
     var recipes = Map.empty[Int, Recipe]
     var skins = Map.empty[Int, Skin]
+    var titles = Map.empty[Int, Title]
 
     var achievementFlags = Set.empty[String]
     var achievementTypes = Set.empty[String]

@@ -95,6 +95,7 @@ object Utils {
             accountMinis = loader.downloadAuthenticatedIds(AccountMinis, t)
             accountRecipes = loader.downloadAuthenticatedIds(AccountRecipes, t)
             accountSkins = loader.downloadAuthenticatedIds(AccountSkins, t)
+            accountTitles = loader.downloadAuthenticatedIds(AccountTitles, t)
         }
 
         achievementCategories = home.resolve(ACHIEVEMENT_CATEGORIES) |> loader.loadPersistentMap(AchievementCategories)
@@ -107,6 +108,7 @@ object Utils {
         minis = home.resolve(MINIS) |> loader.loadPersistentMap(Minis) |> updateCollectionsFromAchievements("Minipet")
         recipes = home.resolve(RECIPES) |> loader.loadPersistentMap(Recipes)
         skins = home.resolve(SKINS) |> loader.loadPersistentMap(Skins) |> updateCollectionsFromAchievements("Skin")
+        titles = home.resolve(TITLES) |> loader.loadPersistentMap(Titles)
 
         achievementFlags = flagsOf(achievements)
         achievementTypes = typesOf(achievements)
