@@ -30,7 +30,8 @@ package object gw2 {
     lazy val commands: List[Command] = List(
         new ArmorCommand,
         new AchievementCategoriesCommand,
-        new AchievementsCommand,
+        new AchievementsCommand("achievements"),
+        new CollectionsCommand,
         new DyesCommand,
         new FlagsCommand,
         new HelpCommand,
@@ -77,6 +78,7 @@ package object gw2 {
     var armorSkins = Map.empty[Int, ArmorSkin]
     var armorTypes = Set.empty[String]
     var armorWeights = Set.empty[String]
+    var collections = Map.empty[Int, Achievement]
     var colorCategories = Set.empty[String]
     var disciplines = Set.empty[String]
     var itemFlags = Set.empty[String]

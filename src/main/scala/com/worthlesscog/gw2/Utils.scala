@@ -35,10 +35,11 @@ object Utils {
         m filter { case (_, v) => v.collection.nonEmpty }
 
     def collectionOf(achievements: Map[Int, Achievement], collectionType: String) =
-        achievements.values filter { a =>
-            a.`type` == "ItemSet" && a.bits.nonEmpty && a.bits.forall { b =>
-                b.size > 1 && b.head.`type` == collectionType && b.forall { _.`type` == b.head.`type` }
-            }
+        achievements |> itemSets filter {
+            case (_, a) =>
+                a.bits.forall { b =>
+                    b.head.`type` == collectionType && b.forall { _.`type` == b.head.`type` }
+                }
         }
 
     def detailTypesOf[V <: Detailed](m: Map[_, V]) =
@@ -88,6 +89,9 @@ object Utils {
 
     def isNumeric(s: String) = s forall { _.isDigit }
 
+    def itemSets[K](m: Map[K, Achievement]) =
+        m filter { case (_, a) => a.`type` == "ItemSet" && a.bits.nonEmpty && a.bits.get.size > 1 }
+
     def load() = {
         config.token foreach { t =>
             accountAchievements = loader.downloadAuthenticatedBlobs(AccountAchievements, t)
@@ -112,6 +116,7 @@ object Utils {
 
         achievementFlags = flagsOf(achievements)
         achievementTypes = typesOf(achievements)
+        collections = achievements |> itemSets
         colorCategories = colors.values.flatMap { _.categories }.toSet
         disciplines = recipes.values.flatMap { _.disciplines }.toSet
         itemFlags = flagsOf(items)
@@ -175,12 +180,10 @@ object Utils {
     def reprice[T <: Id[Int] with Itemized with Priced[T]](m: Map[Int, T]) = {
         val byItem = m flatMap { case (_, c) => c.item.map { _ -> c } }
         val prices = byItem.keys |> Commerce.prices
-        prices.foldLeft(m) { (m, ip) =>
-            ip match {
-                case (i, p) =>
-                    val nc = byItem(i)
-                    m + (nc.id -> (nc |> updatePrice(p)))
-            }
+        prices.foldLeft(m) {
+            case (m, (i, p)) =>
+                val nc = byItem(i)
+                m + (nc.id -> (nc |> updatePrice(p)))
         }
     }
 
@@ -222,21 +225,23 @@ object Utils {
 
     // XXX - dirty
     def updateCollectionsFromAchievements[V <: Collected[V]](progressType: String)(m: Map[Int, V]) =
-        collectionOf(achievements, progressType).foldLeft(m) { (m, a) =>
-            a.bits.fold(m) {
-                _.foldLeft(m) {
-                    case (m, MinipetProgress(_, Some(id))) => m + (id -> m(id).inCollection(a.name))
-                    case (m, SkinProgress(_, Some(id)))    => m + (id -> m(id).inCollection(a.name))
-                    case _                                 => m
+        collectionOf(achievements, progressType).foldLeft(m) {
+            case (m, (_, a)) =>
+                a.bits.fold(m) {
+                    _.foldLeft(m) {
+                        case (m, MinipetProgress(_, Some(id))) => m + (id -> m(id).inCollection(a.name))
+                        case (m, SkinProgress(_, Some(id)))    => m + (id -> m(id).inCollection(a.name))
+                        case _                                 => m
+                    }
                 }
-            }
         }
 
     def updateCollectionsFromData[K, V <: Collected[V] with Id[K] with Named](collections: Map[String, Set[String]])(m: Map[K, V]) = {
-        collections.foldLeft(m) { (m, s) =>
-            s._2.foldLeft(m) { (m, n) =>
-                m.values.find(_.name == n).fold(m) { c => m + (c.id -> c.inCollection(s._1)) }
-            }
+        collections.foldLeft(m) {
+            case (m, (s, set)) =>
+                set.foldLeft(m) { (m, n) =>
+                    m.values.find(_.name == n).fold(m) { c => m + (c.id -> c.inCollection(s)) }
+                }
         }
     }
 

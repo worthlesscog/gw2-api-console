@@ -4,6 +4,8 @@ import Utils.{ asString, byName, dump, dumpAndTally, flagged, isNumeric, matchin
 
 abstract class FlagNameTypeMap[T <: FlagNameTypeAndMap](label: String) extends Command {
 
+    val ID_CONT_FLAG_TYPE = "#id | #contains | #flag | #type"
+
     val bindings = List(label)
 
     def dumpObject(t: T) = t.toMap |> dump(cmpLeft, asString)
@@ -25,6 +27,6 @@ abstract class FlagNameTypeMap[T <: FlagNameTypeAndMap](label: String) extends C
         case _ =>
     }
 
-    def uses = Some(Map(s"$label [#id | #contains | #flag | #type]" -> s"list $label"))
+    def uses = Some(Map(s"$label [$ID_CONT_FLAG_TYPE]" -> s"list $label"))
 
 }

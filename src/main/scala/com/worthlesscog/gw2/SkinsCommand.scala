@@ -15,6 +15,6 @@ class SkinsCommand extends FlagNameTypeMap[Skin]("skins") {
             execute(cmd, skins, skinFlags, skinTypes)
     }
 
-    override def uses = Some(Map("skins [#id | #contains | #flag | #type | collections | invisible]" -> "list skins"))
+    override def uses = Some(Map(s"skins [$ID_CONT_FLAG_TYPE | collections | invisible]" -> "list skins"))
 
 }
