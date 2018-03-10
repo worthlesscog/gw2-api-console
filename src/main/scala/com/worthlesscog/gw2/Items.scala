@@ -21,8 +21,6 @@ trait Item extends FlagNameTypeAndMap with Id[Int] {
     def restrictions: Set[String]
     def `type`: String
     def vendor_value: Int
-    def buy: Option[Int]
-    def sell: Option[Int]
 
     def l = if (level > 0) s"L$level " else ""
     def t = `type`
@@ -59,9 +57,7 @@ case class Armor(
         flags: Set[String],
         game_types: Set[String],
         restrictions: Set[String],
-        details: ArmorDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Detailed with Item {
+        details: ArmorDetails) extends Detailed with Item {
 
     override def t = details.`type`
     def w = details.weight_class
@@ -126,9 +122,7 @@ case class Back(
     flags: Set[String],
     game_types: Set[String],
     restrictions: Set[String],
-    details: BackDetails,
-    buy: Option[Int],
-    sell: Option[Int]) extends Item
+    details: BackDetails) extends Item
 
 case class BackDetails(
     infusion_slots: List[InfusionSlot],
@@ -151,9 +145,7 @@ case class Bag(
         flags: Set[String],
         game_types: Set[String],
         restrictions: Set[String],
-        details: BagDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Item {
+        details: BagDetails) extends Item {
 
     override def toString = s"$name, $rarity $l${details.size} slot $t"
 }
@@ -174,9 +166,7 @@ case class Consumable(
         flags: Set[String],
         game_types: Set[String],
         restrictions: Set[String],
-        details: ConsumableDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Detailed with Item {
+        details: ConsumableDetails) extends Detailed with Item {
 
     override def t = details.`type`
 }
@@ -205,9 +195,7 @@ case class Container(
     flags: Set[String],
     game_types: Set[String],
     restrictions: Set[String],
-    details: ContainerDetails,
-    buy: Option[Int],
-    sell: Option[Int]) extends Detailed with Item
+    details: ContainerDetails) extends Detailed with Item
 
 case class ContainerDetails(`type`: String) extends Details
 
@@ -224,9 +212,7 @@ case class CraftingMaterial(
     default_skin: Option[Int],
     flags: Set[String],
     game_types: Set[String],
-    restrictions: Set[String],
-    buy: Option[Int],
-    sell: Option[Int]) extends Item
+    restrictions: Set[String]) extends Item
 
 case class GatheringTool(
         id: Int,
@@ -242,9 +228,7 @@ case class GatheringTool(
         flags: Set[String],
         game_types: Set[String],
         restrictions: Set[String],
-        details: GatheringToolDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Detailed with Item {
+        details: GatheringToolDetails) extends Detailed with Item {
 
     override def t = details.`type`
 }
@@ -265,9 +249,7 @@ case class Gizmo(
     flags: Set[String],
     game_types: Set[String],
     restrictions: Set[String],
-    details: GizmoDetails,
-    buy: Option[Int],
-    sell: Option[Int]) extends Detailed with Item
+    details: GizmoDetails) extends Detailed with Item
 
 case class GizmoDetails(`type`: String) extends Details
 
@@ -284,9 +266,7 @@ case class Key(
     default_skin: Option[Int],
     flags: Set[String],
     game_types: Set[String],
-    restrictions: Set[String],
-    buy: Option[Int],
-    sell: Option[Int]) extends Item
+    restrictions: Set[String]) extends Item
 
 case class MiniPet(
     id: Int,
@@ -302,9 +282,7 @@ case class MiniPet(
     flags: Set[String],
     game_types: Set[String],
     restrictions: Set[String],
-    details: MiniPetDetails,
-    buy: Option[Int],
-    sell: Option[Int]) extends Item
+    details: MiniPetDetails) extends Item
 
 case class MiniPetDetails(minipet_id: Int)
 
@@ -322,9 +300,7 @@ case class Tool(
         flags: Set[String],
         game_types: Set[String],
         restrictions: Set[String],
-        details: ToolDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Detailed with Item {
+        details: ToolDetails) extends Detailed with Item {
 
     override def t = details.`type`
 }
@@ -344,9 +320,7 @@ case class Trait(
     default_skin: Option[Int],
     flags: Set[String],
     game_types: Set[String],
-    restrictions: Set[String],
-    buy: Option[Int],
-    sell: Option[Int]) extends Item
+    restrictions: Set[String]) extends Item
 
 case class Trinket(
         id: Int,
@@ -362,9 +336,7 @@ case class Trinket(
         flags: Set[String],
         game_types: Set[String],
         restrictions: Set[String],
-        details: TrinketDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Detailed with Item {
+        details: TrinketDetails) extends Detailed with Item {
 
     override def t = details.`type`
 }
@@ -390,9 +362,7 @@ case class Trophy(
     default_skin: Option[Int],
     flags: Set[String],
     game_types: Set[String],
-    restrictions: Set[String],
-    buy: Option[Int],
-    sell: Option[Int]) extends Item
+    restrictions: Set[String]) extends Item
 
 case class UpgradeComponent(
         id: Int,
@@ -408,9 +378,7 @@ case class UpgradeComponent(
         flags: Set[String],
         game_types: Set[String],
         restrictions: Set[String],
-        details: UpgradeComponentDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Detailed with Item {
+        details: UpgradeComponentDetails) extends Detailed with Item {
 
     override def t = details.`type`
 }
@@ -442,9 +410,7 @@ case class Weapon(
         flags: Set[String],
         game_types: Set[String],
         restrictions: Set[String],
-        details: WeaponDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Detailed with Item {
+        details: WeaponDetails) extends Detailed with Item {
 
     override def t = details.`type`
 }
@@ -468,49 +434,49 @@ object ItemProtocols extends DefaultJsonProtocol {
     implicit val fmtInfixUpgrade = jsonFormat3(InfixUpgrade)
     implicit val fmtInfusionSlot = jsonFormat2(InfusionSlot)
     implicit val fmtArmorDetails = jsonFormat8(ArmorDetails)
-    implicit val fmtArmor = jsonFormat16(Armor)
+    implicit val fmtArmor = jsonFormat14(Armor)
 
     implicit val fmtBackDetails = jsonFormat5(BackDetails)
-    implicit val fmtBack = jsonFormat16(Back)
+    implicit val fmtBack = jsonFormat14(Back)
 
     implicit val fmtBagDetails = jsonFormat2(BagDetails)
-    implicit val fmtBag = jsonFormat16(Bag)
+    implicit val fmtBag = jsonFormat14(Bag)
 
     implicit val fmtConsumableDetails = jsonFormat8(ConsumableDetails)
-    implicit val fmtConsumable = jsonFormat16(Consumable)
+    implicit val fmtConsumable = jsonFormat14(Consumable)
 
     implicit val fmtContainerDetails = jsonFormat1(ContainerDetails)
-    implicit val fmtContainer = jsonFormat16(Container)
+    implicit val fmtContainer = jsonFormat14(Container)
 
-    implicit val fmtCraftingMaterial = jsonFormat15(CraftingMaterial)
+    implicit val fmtCraftingMaterial = jsonFormat13(CraftingMaterial)
 
     implicit val fmtGatheringDetails = jsonFormat1(GatheringToolDetails)
-    implicit val fmtGathering = jsonFormat16(GatheringTool)
+    implicit val fmtGathering = jsonFormat14(GatheringTool)
 
     implicit val fmtGizmoDetails = jsonFormat1(GizmoDetails)
-    implicit val fmtGizmo = jsonFormat16(Gizmo)
+    implicit val fmtGizmo = jsonFormat14(Gizmo)
 
-    implicit val fmtKey = jsonFormat15(Key)
+    implicit val fmtKey = jsonFormat13(Key)
 
     implicit val fmtMiniPetDetails = jsonFormat1(MiniPetDetails)
-    implicit val fmtMiniPet = jsonFormat16(MiniPet)
+    implicit val fmtMiniPet = jsonFormat14(MiniPet)
 
     implicit val fmtToolDetails = jsonFormat2(ToolDetails)
-    implicit val fmtTool = jsonFormat16(Tool)
+    implicit val fmtTool = jsonFormat14(Tool)
 
-    implicit val fmtTrait = jsonFormat15(Trait)
+    implicit val fmtTrait = jsonFormat13(Trait)
 
     implicit val fmtTrinketDetails = jsonFormat6(TrinketDetails)
-    implicit val fmtTrinket = jsonFormat16(Trinket)
+    implicit val fmtTrinket = jsonFormat14(Trinket)
 
-    implicit val fmtTrophy = jsonFormat15(Trophy)
+    implicit val fmtTrophy = jsonFormat13(Trophy)
 
     implicit val fmtUpgradeInfixUpgrade = jsonFormat3(UpgradeInfixUpgrade)
     implicit val fmtUpgradeComponentDetails = jsonFormat6(UpgradeComponentDetails)
-    implicit val fmtUpgradeComponent = jsonFormat16(UpgradeComponent)
+    implicit val fmtUpgradeComponent = jsonFormat14(UpgradeComponent)
 
     implicit val fmtWeaponDetails = jsonFormat10(WeaponDetails)
-    implicit val fmtWeapon = jsonFormat16(Weapon)
+    implicit val fmtWeapon = jsonFormat14(Weapon)
 
     implicit object ItemFormat extends RootJsonFormat[Item] {
         def write(i: Item) = i.toJson
