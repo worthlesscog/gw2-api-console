@@ -51,7 +51,7 @@ object ItemStats extends PersistentMapCatalog[Int, ItemStatSet] with IntIdCatalo
 
     import ItemStatProtocols._
 
-    val name = "itemstats"
+    val name = "item stats"
     val url = root + "/itemstats"
 
     def bulkConvert(v: JsValue) = v.convertTo[List[ItemStatSet]]
