@@ -8,18 +8,23 @@ abstract class LockedOrUnlocked extends Command {
         case w :: t :: Nil =>
             armorSkins |> ofWeight(w) |> ofDetailType(t) |> select(accountSkins) |> dumpAndTally(byName, asString) //, detail)
 
-        case wt :: Nil =>
-            if (armorWeights contains wt)
-                armorSkins |> ofWeight(wt) |> select(accountSkins) |> dumpAndTally(byName, asString) //, detail)
-            else if (armorTypes contains wt)
-                armorSkins |> ofDetailType(wt) |> select(accountSkins) |> dumpAndTally(byName, asString) //, detail)
-            else if (weaponTypes contains wt)
-                weaponSkins |> ofDetailType(wt) |> select(accountSkins) |> dumpAndTally(byName, asString) //, detail)
+        case rwt :: Nil =>
+            if (raceNames contains rwt) {
+                armorSkins |> forRace(rwt) |> select(accountSkins) |> dumpAndTally(byName, asString)
+            } else if (armorWeights contains rwt)
+                armorSkins |> ofWeight(rwt) |> select(accountSkins) |> dumpAndTally(byName, asString) //, detail)
+            else if (armorTypes contains rwt)
+                armorSkins |> ofDetailType(rwt) |> select(accountSkins) |> dumpAndTally(byName, asString) //, detail)
+            else if (weaponTypes contains rwt)
+                weaponSkins |> ofDetailType(rwt) |> select(accountSkins) |> dumpAndTally(byName, asString) //, detail)
 
         case Nil =>
             skins |> select(accountSkins) |> dumpAndTally(byName, asString) //, detail)
 
         case _ =>
     }
+
+    def forRace[K](r: String)(m: Map[K, ArmorSkin]) =
+        m filter { case (_, s) => s.restrictions contains r }
 
 }

@@ -8,6 +8,6 @@ class UnlockedCommand extends LockedOrUnlocked {
 
     def execute(cmd: List[String]): Unit = execute(cmd, presentIn[Int, Skin], None)
 
-    val uses = Some(Map("unlocked [#weight] [#type]" -> "list unlocked skins"))
+    val uses = Some(Map("unlocked [#race | [#weight] [#type]]" -> "list unlocked skins"))
 
 }

@@ -22,6 +22,6 @@ class LockedCommand extends LockedOrUnlocked {
 
     def execute(cmd: List[String]): Unit = execute(cmd, absentFrom[Int, Skin], Some(detail))
 
-    val uses = Some(Map("locked [#weight] [#type]" -> "list locked skins"))
+    val uses = Some(Map("locked [#race | [#weight] [#type]]" -> "list locked skins"))
 
 }

@@ -110,6 +110,7 @@ object Utils {
         items = home.resolve(ITEMS) |> loader.loadPersistentMap(Items)
         masteries = home.resolve(MASTERIES) |> loader.loadPersistentMap(Masteries)
         minis = home.resolve(MINIS) |> loader.loadPersistentMap(Minis) |> updateCollectionsFromAchievements("Minipet")
+        races = home.resolve(RACES) |> loader.loadPersistentMap(Races)
         recipes = home.resolve(RECIPES) |> loader.loadPersistentMap(Recipes)
         skins = home.resolve(SKINS) |> loader.loadPersistentMap(Skins) |> updateCollectionsFromAchievements("Skin")
         titles = home.resolve(TITLES) |> loader.loadPersistentMap(Titles)
@@ -121,6 +122,7 @@ object Utils {
         disciplines = recipes.values.flatMap { _.disciplines }.toSet
         itemFlags = flagsOf(items)
         itemTypes = typesOf(items)
+        raceNames = races.keys.toSet
         recipeFlags = flagsOf(recipes)
         recipeTypes = typesOf(recipes)
         skinFlags = flagsOf(skins)

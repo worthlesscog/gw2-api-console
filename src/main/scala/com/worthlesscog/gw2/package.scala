@@ -20,6 +20,7 @@ package object gw2 {
     val ITEM_STATS = "gw2-item-stats.dat"
     val MASTERIES = "gw2-masteries.dat"
     val MINIS = "gw2-minis.dat"
+    val RACES = "gw2-races.dat"
     val RECIPES = "gw2-recipes.dat"
     val SKINS = "gw2-skins.dat"
     val TITLES = "gw2-titles.dat"
@@ -69,6 +70,7 @@ package object gw2 {
     var itemStats = Map.empty[Int, ItemStatSet]
     var masteries = Map.empty[Int, Mastery]
     var minis = Map.empty[Int, Mini]
+    var races = Map.empty[String, Race]
     var recipes = Map.empty[Int, Recipe]
     var skins = Map.empty[Int, Skin]
     var titles = Map.empty[Int, Title]
@@ -83,6 +85,7 @@ package object gw2 {
     var disciplines = Set.empty[String]
     var itemFlags = Set.empty[String]
     var itemTypes = Set.empty[String]
+    var raceNames = Set.empty[String]
     var recipeFlags = Set.empty[String]
     var recipeTypes = Set.empty[String]
     var skinFlags = Set.empty[String]
