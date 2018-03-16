@@ -17,7 +17,9 @@ case class Recipe(
         output_item_id: Int,
         output_upgrade_id: Option[Int],
         time_to_craft_ms: Int,
-        `type`: String) extends Flagged with Id[Int] with Mappable with Typed {
+        `type`: String,
+        buy: Option[Int],
+        sell: Option[Int]) extends Flagged with Id[Int] with Mappable with Priced[Recipe] with Typed {
 
     def gi = guild_ingredients.fold("None") { _.map { uc => uc.count + " x #" + uc.upgrade_id } mkString ", " }
     def il = ingredients map { ic => ic.count + " x #" + ic.item_id } mkString ", "
@@ -35,6 +37,9 @@ case class Recipe(
         "output_upgrade_id" -> noneOrString(output_upgrade_id),
         "time_to_craft_ms" -> time_to_craft_ms.toString,
         "type" -> `type`)
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
 }
 
 case class ItemCount(item_id: Int, count: Int)
@@ -45,7 +50,7 @@ object RecipeProtocols extends DefaultJsonProtocol {
 
     implicit val fmtUpgradeCount = jsonFormat2(UpgradeCount)
     implicit val fmtItemCount = jsonFormat2(ItemCount)
-    implicit val fmtRecipe = jsonFormat12(Recipe)
+    implicit val fmtRecipe = jsonFormat14(Recipe)
 
 }
 
