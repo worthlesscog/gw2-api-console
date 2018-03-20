@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import Utils.{ absentFrom, asString, cmpLeft, cmpRight, dump, dumpAndTally, isNumeric, ofType, presentIn }
+import Utils.{ absentFrom, asString, cmpLeft, cmpRight, dump, dumpAndTally, isNumeric, ofType, presentIn, repriceRecipe, toStringPrice }
 
 class RecipesCommand extends Command {
 
@@ -22,11 +22,11 @@ class RecipesCommand extends Command {
     def execute(cmd: List[String]): Unit = cmd match {
         case "locked" :: cdt :: Nil =>
             if (disciplines contains cdt)
-                recipes |> forDiscipline(cdt) |> dumpAbsent(accountRecipes)
+                recipes |> forDiscipline(cdt) |> repriceRecipe |> dumpAbsent(accountRecipes)
             else if (recipeTypes contains cdt)
-                recipes |> ofType(cdt) |> dumpAbsent(accountRecipes)
+                recipes |> ofType(cdt) |> repriceRecipe |> dumpAbsent(accountRecipes)
             else
-                recipes |> matching(cdt) |> dumpAbsent(accountRecipes)
+                recipes |> matching(cdt) |> repriceRecipe |> dumpAbsent(accountRecipes)
 
         case "unlocked" :: cdt :: Nil =>
             if (disciplines contains cdt)
@@ -37,7 +37,7 @@ class RecipesCommand extends Command {
                 recipes |> matching(cdt) |> dumpPresent(accountRecipes)
 
         case "locked" :: Nil =>
-            recipes |> dumpAbsent(accountRecipes)
+            recipes |> repriceRecipe |> dumpAbsent(accountRecipes)
 
         case "unlocked" :: Nil =>
             recipes |> dumpPresent(accountRecipes)
@@ -68,9 +68,9 @@ class RecipesCommand extends Command {
 
     def toItems(m: Map[_, Recipe]) =
         m map {
-            case (k, v) =>
-                val o = v.output_item_id
-                k -> items.get(o).fold(s"Item #$o Missing")(_.name)
+            case (k, r) =>
+                val o = r.output_item_id
+                k -> items.get(o).fold(s"Item #$o Missing")(i => s"${i.name}${r.sell.fold("") { ", " + toStringPrice(_) }}")
         }
 
     def unlockable(m: Map[_, Recipe]) =

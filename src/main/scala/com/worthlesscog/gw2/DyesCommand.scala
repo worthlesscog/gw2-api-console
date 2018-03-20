@@ -2,7 +2,7 @@ package com.worthlesscog.gw2
 
 import scala.language.postfixOps
 
-import Utils.{ asString, byName, categorized, cmpLeft, collectable, dump, dumpAndTally, dumpCollections, isNumeric, matchingName, reprice, ticked, tickedAndPriced, toCollections, toStringPrice }
+import Utils.{ asString, byName, categorized, cmpLeft, collectable, dump, dumpAndTally, dumpCollections, isNumeric, matchingName, repriceByItem, ticked, tickedAndPriced, toCollections, toStringPrice }
 
 class DyesCommand extends Command {
 
@@ -11,10 +11,10 @@ class DyesCommand extends Command {
 
     def execute(cmd: List[String]): Unit = cmd match {
         case "collections" :: Nil =>
-            colors |> collectable |> reprice |> toCollections |> dumpCollections(tickedAndPriced(accountDyes))
+            colors |> collectable |> repriceByItem |> toCollections |> dumpCollections(tickedAndPriced(accountDyes))
 
         case "harvest" :: Nil =>
-            colors |> harvestable |> reprice |> dumpAndTally(byName, withCategoriesAndPrices)
+            colors |> harvestable |> repriceByItem |> dumpAndTally(byName, withCategoriesAndPrices)
 
         case icc :: Nil =>
             if (icc |> isNumeric) {

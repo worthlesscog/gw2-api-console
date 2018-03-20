@@ -179,14 +179,26 @@ object Utils {
     def presentIn[K, V](s: Set[K])(m: Map[K, V]) =
         m filter { case (k, _) => s contains k }
 
-    def reprice[T <: Id[Int] with Itemized with Priced[T]](m: Map[Int, T]) = {
-        val byItem = m flatMap { case (_, c) => c.item.map { _ -> c } }
+    def recipeItems = items.filter { case (_, i) => i.name.startsWith("Recipe:") }
+
+    def reprice[T <: Id[Int] with Priced[T]](m: Map[Int, T], byItem: Map[Int, T]) = {
         val prices = byItem.keys |> Commerce.prices
         prices.foldLeft(m) {
             case (m, (i, p)) =>
                 val nc = byItem(i)
                 m + (nc.id -> (nc |> updatePrice(p)))
         }
+    }
+
+    def repriceByItem[T <: Id[Int] with Itemized with Priced[T]](m: Map[Int, T]) = {
+        val byItem = m flatMap { case (_, t) => t.item.map { _ -> t } }
+        reprice(m, byItem)
+    }
+
+    def repriceRecipe(m: Map[Int, Recipe]) = {
+        val ri = recipeItems.values
+        val byItem = m flatMap { case (_, r) => ri.find { _.name.endsWith(items(r.output_item_id).name) }.map { _.id -> r } }
+        reprice(m, byItem)
     }
 
     def saveObject[A](p: Path)(a: A): A = {
@@ -247,8 +259,8 @@ object Utils {
         }
     }
 
-    def updatePrice[T <: Priced[T]](p: Price)(c: T) =
-        c.withPrices(Some(p.buys.fold(0)(_.unit_price)), Some(p.sells.fold(0)(_.unit_price)))
+    def updatePrice[T <: Priced[T]](p: Price)(t: T) =
+        t.withPrices(Some(p.buys.fold(0)(_.unit_price)), Some(p.sells.fold(0)(_.unit_price)))
 
     def using[A <: { def close(): Unit }, B](closeable: A)(f: A => B): B =
         try { f(closeable) } finally { closeable.close() }

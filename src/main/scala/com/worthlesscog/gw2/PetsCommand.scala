@@ -2,7 +2,7 @@ package com.worthlesscog.gw2
 
 import scala.language.postfixOps
 
-import Utils.{ asString, byName, cmpLeft, collectable, dump, dumpAndTally, dumpCollections, isNumeric, matchingName, reprice, ticked, tickedAndPriced, toCollections }
+import Utils.{ asString, byName, cmpLeft, collectable, dump, dumpAndTally, dumpCollections, isNumeric, matchingName, repriceByItem, ticked, tickedAndPriced, toCollections }
 
 class PetsCommand extends Command {
 
@@ -12,7 +12,7 @@ class PetsCommand extends Command {
 
     def execute(cmd: List[String]): Unit = cmd match {
         case "collections" :: Nil =>
-            minis |> collectable |> reprice |> toCollections |> dumpCollections(tickedAndPriced(accountMinis))
+            minis |> collectable |> repriceByItem |> toCollections |> dumpCollections(tickedAndPriced(accountMinis))
 
         case "trade" :: Nil =>
         //            val missing = minis filterNot { case (_, m) => accountMinis contains m.id }
