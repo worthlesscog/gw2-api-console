@@ -23,9 +23,9 @@ class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](la
                 case (a, n) =>
                     val state = if (ticks contains n) TICK else " "
                     val label = a match {
-                        case ItemProgress(_, id)    => id map { "Item, " + possiblyMissingName(items, _) }
-                        case MinipetProgress(_, id) => id map { "Mini, " + possiblyMissingName(minis, _) }
-                        case SkinProgress(_, id)    => id map { "Skin, " + possiblyMissingName(skins, _) }
+                        case ItemProgress(_, id)    => id map { i => "Item, " + maybeName(items, i) + maybeRarity(items, i) }
+                        case MinipetProgress(_, id) => id map { "Mini, " + maybeName(minis, _) }
+                        case SkinProgress(_, id)    => id map { "Skin, " + maybeName(skins, _) }
                         case TextProgress(_, text)  => text
                     }
                     s"    $state  ${label.getOrElse("")}\n" |> info
@@ -61,7 +61,9 @@ class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](la
         (c1.toFloat / s1 < c2.toFloat / s2)
     }
 
-    def possiblyMissingName[V <: Named](m: Map[Int, V], id: Int) = m.get(id).fold(s"#$id Missing")(_.name)
+    def maybeName[V <: Named](m: Map[Int, V], id: Int) = m.get(id).fold(s"#$id Missing")(i => i.name)
+
+    def maybeRarity(m: Map[Int, Item], id: Int) = m.get(id).fold("")(i => ", " + i.rarity)
 
     def started(a: Achievement) = {
         val (steps, count) = stepsDone(achievements(a.id), accountAchievements.get(a.id))
