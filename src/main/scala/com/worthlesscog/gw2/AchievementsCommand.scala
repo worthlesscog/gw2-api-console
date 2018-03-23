@@ -8,8 +8,8 @@ class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](la
 
     def completed(a: Achievement): String = {
         val (steps, count) = stepsDone(achievements(a.id), accountAchievements.get(a.id))
-        val (state, progress) = if (count == steps) (TICK, "") else (" ", s" ($count/$steps)")
-        s"$state  ${a.name}$progress"
+        val progress = if (count == steps) "" else s" ($count/$steps)"
+        s"${a.name}$progress"
     }
 
     override def dumpObject(a: Achievement) = {
@@ -39,7 +39,7 @@ class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](la
 
     override def execute(cmd: List[String]): Unit = cmd match {
         case "nearly" :: Nil =>
-            achievements |> started |> incomplete |> dumpAndTally(nearly, completed)
+            achievements |> started |> incomplete |> dumpAndTally(nearly, completed, 50)
 
         case _ =>
             execute(cmd, achievements, achievementFlags, achievementTypes)
@@ -71,9 +71,7 @@ class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](la
     }
 
     def started(m: Map[_, Achievement]): Map[_, Achievement] =
-        m filter {
-            case (_, a) => started(a)
-        }
+        m filter { case (_, a) => started(a) }
 
     def stepsDone(a: Achievement, aa: Option[AccountAchievement]) =
         (a.tiers.last.count,

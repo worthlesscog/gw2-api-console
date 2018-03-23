@@ -8,7 +8,7 @@ class CollectionsCommand extends AchievementsCommand("collections") {
 
     override def execute(cmd: List[String]): Unit = cmd match {
         case "nearly" :: Nil =>
-            collections |> started |> incomplete |> dumpAndTally(nearly, completed)
+            collections |> started |> incomplete |> dumpAndTally(nearly, completed, 50)
 
         case Nil =>
             collections |> dumpAndTally(byName, completed)

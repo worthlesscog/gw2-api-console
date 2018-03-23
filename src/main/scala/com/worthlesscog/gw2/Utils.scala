@@ -42,21 +42,28 @@ object Utils {
                 }
         }
 
+    def consumables[K, V](m: Map[K, V]) = m flatMap {
+        case (i, c: Consumable) => Some(i -> c)
+        case _                  => None
+    }
+
     def detailTypesOf[V <: Detailed](m: Map[_, V]) =
         m map { case (_, v) => v.details.`type` } toSet
 
-    def dump[K, V](s: ((K, V), (K, V)) => Boolean, f: V => String)(m: Map[K, V]) =
+    def dump[K, V](s: ((K, V), (K, V)) => Boolean, f: V => String, limit: Int = 0)(m: Map[K, V]) =
         if (m nonEmpty) {
             val fmt = "  %-" + (m.keys |> longest) + "s  %s\n"
-            m.toSeq.sortWith(s) foreach {
+            val sorted = m.toSeq.sortWith(s)
+            val vs = if (limit > 0) sorted.take(limit) else sorted
+            vs foreach {
                 case (k, v) =>
                     fmt.format(k, f(v)) |> info
             }
         }
 
-    def dumpAndTally[K, V](s: ((K, V), (K, V)) => Boolean, f: V => String)(m: Map[K, V]) = {
-        m |> dump(s, f)
-        f"${m.size}%d row(s)\n" |> info
+    def dumpAndTally[K, V](s: ((K, V), (K, V)) => Boolean, f: V => String, limit: Int = 0)(m: Map[K, V]) = {
+        m |> dump(s, f, limit)
+        f"${if (limit > 0) m.size.min(limit) else m.size}%d row(s)\n" |> info
     }
 
     def dumpCollections[V <: Collected[V] with Id[Int] with Named](f: V => String)(m: Map[String, Iterable[V]]) = {
@@ -179,7 +186,8 @@ object Utils {
     def presentIn[K, V](s: Set[K])(m: Map[K, V]) =
         m filter { case (k, _) => s contains k }
 
-    def recipeItems = items.filter { case (_, i) => i.name.startsWith("Recipe:") }
+    def recipeItems =
+        items |> consumables filter { case (_, c) => c.details.unlock_type.contains("CraftingRecipe") }
 
     def reprice[T <: Id[Int] with Priced[T]](m: Map[Int, T], byItem: Map[Int, T]) = {
         val prices = byItem.keys |> Commerce.prices
@@ -196,8 +204,8 @@ object Utils {
     }
 
     def repriceRecipe(m: Map[Int, Recipe]) = {
-        val ri = recipeItems.values
-        val byItem = m flatMap { case (_, r) => ri.find { _.name.endsWith(items(r.output_item_id).name) }.map { _.id -> r } }
+        val ri = recipeItems |> notFlagged("AccountBound")
+        val byItem = m flatMap { case (_, r) => ri.find { case (_, c) => c.details.recipe_id.contains(r.id) }.map { case (i, _) => i -> r } }
         reprice(m, byItem)
     }
 
