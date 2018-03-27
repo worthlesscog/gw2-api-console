@@ -8,39 +8,40 @@ import spray.json.{ DefaultJsonProtocol, JsString, JsValue, RootJsonFormat, pimp
 // XXX - needs specific unmarshall
 
 trait Item extends FlagNameTypeAndMap with Id[Int] {
+    def id: Int
     def chat_link: String
-    def default_skin: Option[Int]
+    def name: String
+    def icon: Option[String]
     def description: Option[String]
+    def `type`: String
+    def rarity: String
+    def level: Int
+    def vendor_value: Int
+    def default_skin: Option[Int]
     def flags: Set[String]
     def game_types: Set[String]
-    def icon: Option[String]
-    def id: Int
-    def level: Int
-    def name: String
-    def rarity: String
     def restrictions: Set[String]
-    def `type`: String
-    def vendor_value: Int
 
     def l = if (level > 0) s"L$level " else ""
     def t = `type`
 
     def toMap = Map(
+        "id" -> id.toString,
         "chat_link" -> chat_link,
+        "name" -> name,
+        "icon" -> noneOrString(icon),
         "description" -> noneOrString(description),
+        "type" -> `type`,
+        "rarity" -> rarity,
+        "level" -> level.toString,
+        "vendor_value" -> toStringPrice(vendor_value),
         "default_skin" -> noneOrString(default_skin),
         "flags" -> noneOrSorted(flags),
         "game_types" -> noneOrSorted(game_types),
-        "icon" -> noneOrString(icon),
-        "id" -> id.toString,
-        "level" -> level.toString,
-        "name" -> name,
-        "rarity" -> rarity,
-        "restrictions" -> noneOrSorted(restrictions),
-        "type" -> `type`,
-        "vendor_value" -> toStringPrice(vendor_value))
+        "restrictions" -> noneOrSorted(restrictions))
 
     override def toString = s"$name, $rarity, $l$t"
+
 }
 
 case class Armor(
@@ -63,7 +64,9 @@ case class Armor(
     def w = details.weight_class
 
     override def toMap = super.toMap ++ details.toMap
+
     override def toString = s"$name, $rarity, $l$w $t"
+
 }
 
 case class ArmorDetails(
@@ -88,24 +91,42 @@ case class ArmorDetails(
         "suffix_item_id" -> noneOrString(suffix_item_id),
         "secondary_suffix_item_id" -> secondary_suffix_item_id,
         "stat_choices" -> noneOrCommas(stat_choices))
+
 }
 
-case class InfusionSlot(flags: List[String], item_id: Option[Int]) {
+case class InfusionSlot(
+        flags: List[String],
+        item_id: Option[Int]) {
+
     override def toString = flags.mkString(", ") + item_id.fold("") { " " + }
+
 }
 
-case class InfixUpgrade(attributes: List[AttributeModifier], buff: Option[Buff], id: Int) {
+case class InfixUpgrade(
+        attributes: List[AttributeModifier],
+        buff: Option[Buff],
+        id: Int) {
+
     def al = attributes map { _.toString } mkString (", ", ", ", "")
 
     override def toString = id + al + buff.fold("") { ", " + }
+
 }
 
-case class AttributeModifier(attribute: String, modifier: Int) {
+case class AttributeModifier(
+        attribute: String,
+        modifier: Int) {
+
     override def toString = attribute + " " + modifier
+
 }
 
-case class Buff(skill_id: Int, description: Option[String]) {
+case class Buff(
+        skill_id: Int,
+        description: Option[String]) {
+
     override def toString = description.fold(skill_id.toString) { skill_id + " " + }
+
 }
 
 case class Back(
@@ -148,9 +169,12 @@ case class Bag(
         details: BagDetails) extends Item {
 
     override def toString = s"$name, $rarity $l${details.size} slot $t"
+
 }
 
-case class BagDetails(size: Int, no_sell_or_sort: Boolean)
+case class BagDetails(
+    size: Int,
+    no_sell_or_sort: Boolean)
 
 case class Consumable(
         id: Int,
@@ -169,17 +193,34 @@ case class Consumable(
         details: ConsumableDetails) extends Detailed with Item {
 
     override def t = details.`type`
+
+    override def toMap = super.toMap ++ details.toMap
+
 }
 
 case class ConsumableDetails(
-    `type`: String,
-    description: Option[String],
-    duration_ms: Option[Int],
-    unlock_type: Option[String],
-    color_id: Option[Int],
-    recipe_id: Option[Int],
-    apply_count: Option[Int],
-    name: Option[String]) extends Details
+        `type`: String,
+        description: Option[String],
+        duration_ms: Option[Int],
+        unlock_type: Option[String],
+        color_id: Option[Int],
+        recipe_id: Option[Int],
+        apply_count: Option[Int],
+        name: Option[String],
+        skins: Option[List[Int]]) extends Details with Mappable {
+
+    def toMap = Map(
+        "consumable_type" -> `type`,
+        "consumable_description" -> noneOrString(description),
+        "duration_ms" -> noneOrString(duration_ms),
+        "unlock_type" -> noneOrString(unlock_type),
+        "color_id" -> noneOrString(color_id),
+        "recipe_id" -> noneOrString(recipe_id),
+        "apply_count" -> noneOrString(apply_count),
+        "consumable_name" -> noneOrString(name),
+        "skins" -> noneOrCommas(skins))
+
+}
 
 case class Container(
     id: Int,
@@ -197,7 +238,8 @@ case class Container(
     restrictions: Set[String],
     details: ContainerDetails) extends Detailed with Item
 
-case class ContainerDetails(`type`: String) extends Details
+case class ContainerDetails(
+    `type`: String) extends Details
 
 case class CraftingMaterial(
     id: Int,
@@ -231,9 +273,11 @@ case class GatheringTool(
         details: GatheringToolDetails) extends Detailed with Item {
 
     override def t = details.`type`
+
 }
 
-case class GatheringToolDetails(`type`: String) extends Details
+case class GatheringToolDetails(
+    `type`: String) extends Details
 
 case class Gizmo(
     id: Int,
@@ -251,7 +295,8 @@ case class Gizmo(
     restrictions: Set[String],
     details: GizmoDetails) extends Detailed with Item
 
-case class GizmoDetails(`type`: String) extends Details
+case class GizmoDetails(
+    `type`: String) extends Details
 
 case class Key(
     id: Int,
@@ -284,7 +329,8 @@ case class MiniPet(
     restrictions: Set[String],
     details: MiniPetDetails) extends Item
 
-case class MiniPetDetails(minipet_id: Int)
+case class MiniPetDetails(
+    minipet_id: Int)
 
 case class Tool(
         id: Int,
@@ -303,9 +349,12 @@ case class Tool(
         details: ToolDetails) extends Detailed with Item {
 
     override def t = details.`type`
+
 }
 
-case class ToolDetails(`type`: String, charges: Int) extends Details
+case class ToolDetails(
+    `type`: String,
+    charges: Int) extends Details
 
 case class Trait(
     id: Int,
@@ -339,6 +388,7 @@ case class Trinket(
         details: TrinketDetails) extends Detailed with Item {
 
     override def t = details.`type`
+
 }
 
 case class TrinketDetails(
@@ -381,6 +431,7 @@ case class UpgradeComponent(
         details: UpgradeComponentDetails) extends Detailed with Item {
 
     override def t = details.`type`
+
 }
 
 case class UpgradeComponentDetails(
@@ -413,6 +464,7 @@ case class Weapon(
         details: WeaponDetails) extends Detailed with Item {
 
     override def t = details.`type`
+
 }
 
 case class WeaponDetails(
@@ -442,7 +494,7 @@ object ItemProtocols extends DefaultJsonProtocol {
     implicit val fmtBagDetails = jsonFormat2(BagDetails)
     implicit val fmtBag = jsonFormat14(Bag)
 
-    implicit val fmtConsumableDetails = jsonFormat8(ConsumableDetails)
+    implicit val fmtConsumableDetails = jsonFormat9(ConsumableDetails)
     implicit val fmtConsumable = jsonFormat14(Consumable)
 
     implicit val fmtContainerDetails = jsonFormat1(ContainerDetails)

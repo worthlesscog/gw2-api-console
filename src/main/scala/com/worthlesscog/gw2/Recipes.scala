@@ -6,18 +6,18 @@ import Utils.{ noneOrSorted, noneOrString }
 import spray.json.{ DefaultJsonProtocol, JsValue }
 
 case class Recipe(
-        chat_link: String,
-        disciplines: Set[String],
-        flags: Set[String],
-        guild_ingredients: Option[List[UpgradeCount]],
         id: Int,
-        ingredients: List[ItemCount],
-        min_rating: Int,
-        output_item_count: Int,
-        output_item_id: Int,
-        output_upgrade_id: Option[Int],
-        time_to_craft_ms: Int,
         `type`: String,
+        output_item_id: Int,
+        output_item_count: Int,
+        time_to_craft_ms: Int,
+        disciplines: Set[String],
+        min_rating: Int,
+        flags: Set[String],
+        ingredients: List[ItemCount],
+        guild_ingredients: Option[List[UpgradeCount]],
+        output_upgrade_id: Option[Int],
+        chat_link: String,
         buy: Option[Int],
         sell: Option[Int]) extends Flagged with Id[Int] with Mappable with Priced[Recipe] with Typed {
 
@@ -25,26 +25,31 @@ case class Recipe(
     def il = ingredients map { ic => ic.count + " x #" + ic.item_id } mkString ", "
 
     def toMap = Map(
-        "chat_link" -> chat_link,
-        "disciplines" -> noneOrSorted(disciplines),
-        "flags" -> noneOrSorted(flags),
-        "guild_ingredients" -> gi,
         "id" -> id.toString,
-        "ingredients" -> il,
-        "min_rating" -> min_rating.toString,
-        "output_item_count" -> output_item_count.toString,
+        "type" -> `type`,
         "output_item_id" -> output_item_id.toString,
-        "output_upgrade_id" -> noneOrString(output_upgrade_id),
+        "output_item_count" -> output_item_count.toString,
         "time_to_craft_ms" -> time_to_craft_ms.toString,
-        "type" -> `type`)
+        "disciplines" -> noneOrSorted(disciplines),
+        "min_rating" -> min_rating.toString,
+        "flags" -> noneOrSorted(flags),
+        "ingredients" -> il,
+        "guild_ingredients" -> gi,
+        "output_upgrade_id" -> noneOrString(output_upgrade_id),
+        "chat_link" -> chat_link)
 
     def withPrices(b: Option[Int], s: Option[Int]) =
         copy(buy = b, sell = s)
+
 }
 
-case class ItemCount(item_id: Int, count: Int)
+case class ItemCount(
+    item_id: Int,
+    count: Int)
 
-case class UpgradeCount(upgrade_id: Int, count: Int)
+case class UpgradeCount(
+    upgrade_id: Int,
+    count: Int)
 
 object RecipeProtocols extends DefaultJsonProtocol {
 

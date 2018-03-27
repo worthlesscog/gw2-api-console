@@ -209,6 +209,12 @@ object Utils {
         reprice(m, byItem)
     }
 
+    def repriceSkin(m: Map[Int, Skin]) = {
+        val si = skinItems
+        val byItem = m flatMap { case (_, s) => si.find { case (_, c) => c.details.skins.forall { _.contains(s.id) } }.map { case (i, _) => i -> s } }
+        reprice(m, byItem)
+    }
+
     def saveObject[A](p: Path)(a: A): A = {
         using(p |> oos) { _.writeObject(a) }
         a
@@ -218,6 +224,9 @@ object Utils {
         case (k, t: T) => Some(k -> t)
         case _         => None
     }
+
+    def skinItems =
+        items |> consumables filter { case (_, c) => c.details.`type` == "Transmutation" }
 
     def splitAndBar(s: String) = s split ("(?=\\p{Upper})") map (_.toLowerCase) mkString "_"
 

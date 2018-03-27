@@ -8,6 +8,7 @@ case class Race(
         skills: Set[Int]) extends Id[String] with Named {
 
     override def toString = id
+
 }
 
 object RaceProtocols extends DefaultJsonProtocol {

@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import Utils.{ dumpAndTally, asString, byName }
+import Utils.{ asString, byName, dumpAndTally }
 
 class MasteriesCommand extends Command {
 

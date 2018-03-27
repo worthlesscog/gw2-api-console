@@ -12,6 +12,7 @@ case class Mastery(
         levels: List[MasteryLevel]) extends Id[Int] with Named {
 
     override def toString = name
+
 }
 
 case class MasteryLevel(

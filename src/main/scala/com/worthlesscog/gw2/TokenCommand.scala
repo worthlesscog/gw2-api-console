@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import Utils.{ asString, dump, cmpLeft }
+import Utils.{ asString, cmpLeft, dump }
 
 class TokenCommand extends Command {
 

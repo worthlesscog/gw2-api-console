@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import Utils.{ asString, dump, info, cmpLeft }
+import Utils.{ asString, cmpLeft, dump, info }
 
 class HelpCommand extends Command {
 

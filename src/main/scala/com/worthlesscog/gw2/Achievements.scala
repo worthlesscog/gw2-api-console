@@ -18,29 +18,50 @@ case class Achievement(
         point_cap: Option[Int]) extends FlagNameTypeAndMap with Id[Int] {
 
     def isMeta = flags contains "CategoryDisplay"
+
     def toMap = Map()
 
     override def toString = name
+
 }
 
-case class AchievementTier(count: Int, points: Int)
+case class AchievementTier(
+    count: Int,
+    points: Int)
 
 sealed abstract class AchievementReward {
     def `type`: String
 }
-case class CoinReward(`type`: String, count: Int) extends AchievementReward
-case class ItemReward(`type`: String, id: Int, count: Int) extends AchievementReward
-case class MasteryReward(`type`: String, id: Int, region: String) extends AchievementReward
-case class TitleReward(`type`: String, id: Int) extends AchievementReward
+case class CoinReward(
+    `type`: String,
+    count: Int) extends AchievementReward
+case class ItemReward(
+    `type`: String,
+    id: Int,
+    count: Int) extends AchievementReward
+case class MasteryReward(
+    `type`: String,
+    id: Int,
+    region: String) extends AchievementReward
+case class TitleReward(
+    `type`: String,
+    id: Int) extends AchievementReward
 
 sealed abstract class AchievementProgress {
     def `type`: String
 }
-// case class IdProgress(`type`: String, id: Option[Int]) extends AchievementProgress
-case class ItemProgress(`type`: String, id: Option[Int]) extends AchievementProgress
-case class MinipetProgress(`type`: String, id: Option[Int]) extends AchievementProgress
-case class SkinProgress(`type`: String, id: Option[Int]) extends AchievementProgress
-case class TextProgress(`type`: String, text: Option[String]) extends AchievementProgress
+case class ItemProgress(
+    `type`: String,
+    id: Option[Int]) extends AchievementProgress
+case class MinipetProgress(
+    `type`: String,
+    id: Option[Int]) extends AchievementProgress
+case class SkinProgress(
+    `type`: String,
+    id: Option[Int]) extends AchievementProgress
+case class TextProgress(
+    `type`: String,
+    text: Option[String]) extends AchievementProgress
 
 object AchievementProtocols extends DefaultJsonProtocol {
 

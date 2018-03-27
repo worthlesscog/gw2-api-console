@@ -5,13 +5,18 @@ import scala.language.postfixOps
 import Utils.optLabelledFloat
 import spray.json.{ DefaultJsonProtocol, JsValue }
 
-case class ItemStatSet(id: Int, name: String, attributes: Attributes) extends Id[Int] with Mappable with Named {
+case class ItemStatSet(
+        id: Int,
+        name: String,
+        attributes: Attributes) extends Id[Int] with Mappable with Named {
+
     def toMap = Map(
         "id" -> id.toString,
-        "attributes" -> attributes.toString,
-        "name" -> name)
+        "name" -> name,
+        "attributes" -> attributes.toString)
 
     override def toString = name
+
 }
 
 case class Attributes(
@@ -38,6 +43,7 @@ case class Attributes(
     def vit = optLabelledFloat(Vitality, "Vitality")
 
     override def toString = List(agony, boon, condi, dur, crit, heal, power, prec, tough, vit).flatten mkString ", "
+
 }
 
 object ItemStatProtocols extends DefaultJsonProtocol {

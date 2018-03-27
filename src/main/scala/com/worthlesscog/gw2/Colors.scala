@@ -36,7 +36,13 @@ case class Color(
 
 }
 
-case class ColorDetails(brightness: Int, contrast: Float, hue: Int, saturation: Float, lightness: Float, rgb: List[Int]) {
+case class ColorDetails(
+        brightness: Int,
+        contrast: Float,
+        hue: Int,
+        saturation: Float,
+        lightness: Float,
+        rgb: List[Int]) {
 
     def rgbs = rgb.mkString("[", ", ", "]")
 

@@ -11,6 +11,7 @@ case class AchievementCategory(
         achievements: List[Int]) extends Id[Int] with Named {
 
     override def toString = name
+
 }
 
 object AchievementCategoryProtocols extends DefaultJsonProtocol {

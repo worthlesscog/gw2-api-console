@@ -2,8 +2,15 @@ package com.worthlesscog.gw2
 
 import spray.json.{ DefaultJsonProtocol, JsValue }
 
-case class Price(id: Int, whitelisted: Boolean, buys: Option[TradeInfo], sells: Option[TradeInfo]) extends Id[Int]
-case class TradeInfo(quantity: Int, unit_price: Int)
+case class Price(
+    id: Int,
+    whitelisted: Boolean,
+    buys: Option[TradeInfo],
+    sells: Option[TradeInfo]) extends Id[Int]
+
+case class TradeInfo(
+    unit_price: Int,
+    quantity: Int)
 
 object PriceProtocols extends DefaultJsonProtocol {
 

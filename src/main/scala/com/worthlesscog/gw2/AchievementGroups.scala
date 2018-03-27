@@ -10,6 +10,7 @@ case class AchievementGroup(
         categories: Set[Int]) extends Id[String] with Named {
 
     override def toString = name
+
 }
 
 object AchievementGroupProtocols extends DefaultJsonProtocol {
