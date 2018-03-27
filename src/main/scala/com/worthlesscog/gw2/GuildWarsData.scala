@@ -9,6 +9,7 @@ object GuildWarsData {
         "Blue Shift" -> Set("Baby Blue", "Blue Steel", "Ghost", "Lapis", "Phthalo Blue", "Powder Blue", "Resolution", "Valor", "Zaffre"),
         "Crimson Lion" -> Set("Aureus", "Crimson Lion", "Golden Lion", "Imperial Gold", "Imperial Red", "Rosewood"),
         "Deathly" -> Set("Acid", "Acrid", "Algae", "Caustic", "Swampblack", "Toxin"),
+        "Elonian Beasts" -> Set("Choya", "Desert Harpy", "Hydra", "Iboga", "Jacaranda", "Sand Shark"),
         "Elonian Landscape" -> Set("Highlands", "Mesa", "Oasis", "Ruin", "Sandstorm", "Sulfur"),
         "Flame" -> Set("Charred", "Cinders", "Flame", "Flare", "Molten", "Pyre"),
         "Frost" -> Set("Deep Glacial Sky", "Deep Glacial Teal", "Glacial Sky", "Glacial Teal", "Shiver Sea", "Shiver Sky"),
