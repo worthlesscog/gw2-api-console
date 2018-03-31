@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import java.io.InputStream
+import java.io.{ FileNotFoundException, InputStream }
 import java.net.URL
 import java.nio.file.{ Files, Path }
 
@@ -38,6 +38,9 @@ class Loader {
             }
             utf8(b) |> Some.apply map { JsonParser(_) }
         } catch {
+            case x: FileNotFoundException =>
+                // s"Resource not found ${x.getMessage}\n" |> info
+                None
             case t: Throwable =>
                 t.getLocalizedMessage + "\n" |> info
                 None
