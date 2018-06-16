@@ -12,7 +12,7 @@ class LockedCommand extends LockedOrUnlocked {
     def detail(s: Skin) = {
         val is = items.values filter { _.default_skin contains s.id }
         val ss = is map { i =>
-            if (bound.intersect(i.flags) isEmpty)
+            if (bound intersect i.flags isEmpty)
                 i.id + ", " + i.toString + " <------------- lookup"
             else
                 i.id + ", " + i.toString

@@ -7,7 +7,7 @@ import spray.json.{ DefaultJsonProtocol, JsString, JsValue, RootJsonFormat, pimp
 
 // XXX - needs specific unmarshall
 
-trait Item extends FlagNameTypeAndMap with Id[Int] {
+trait Item extends FlagNameTypeAndMap with Id[Int] with Priced[Item] {
     def id: Int
     def chat_link: String
     def name: String
@@ -21,9 +21,13 @@ trait Item extends FlagNameTypeAndMap with Id[Int] {
     def flags: Set[String]
     def game_types: Set[String]
     def restrictions: Set[String]
+    def buy: Option[Int]
+    def sell: Option[Int]
 
     def l = if (level > 0) s"L$level " else ""
     def t = `type`
+
+    def price = (buy, sell)
 
     def toMap = Map(
         "id" -> id.toString,
@@ -58,7 +62,9 @@ case class Armor(
         flags: Set[String],
         game_types: Set[String],
         restrictions: Set[String],
-        details: ArmorDetails) extends Detailed with Item {
+        details: ArmorDetails,
+        buy: Option[Int],
+        sell: Option[Int]) extends Item with Detailed {
 
     override def t = details.`type`
     def w = details.weight_class
@@ -66,6 +72,9 @@ case class Armor(
     override def toMap = super.toMap ++ details.toMap
 
     override def toString = s"$name, $rarity, $l$w $t"
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
 
 }
 
@@ -130,20 +139,27 @@ case class Buff(
 }
 
 case class Back(
-    id: Int,
-    chat_link: String,
-    name: String,
-    icon: Option[String],
-    description: Option[String],
-    `type`: String,
-    rarity: String,
-    level: Int,
-    vendor_value: Int,
-    default_skin: Option[Int],
-    flags: Set[String],
-    game_types: Set[String],
-    restrictions: Set[String],
-    details: BackDetails) extends Item
+        id: Int,
+        chat_link: String,
+        name: String,
+        icon: Option[String],
+        description: Option[String],
+        `type`: String,
+        rarity: String,
+        level: Int,
+        vendor_value: Int,
+        default_skin: Option[Int],
+        flags: Set[String],
+        game_types: Set[String],
+        restrictions: Set[String],
+        details: BackDetails,
+        buy: Option[Int],
+        sell: Option[Int]) extends Item {
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
+
+}
 
 case class BackDetails(
     infusion_slots: List[InfusionSlot],
@@ -166,9 +182,14 @@ case class Bag(
         flags: Set[String],
         game_types: Set[String],
         restrictions: Set[String],
-        details: BagDetails) extends Item {
+        details: BagDetails,
+        buy: Option[Int],
+        sell: Option[Int]) extends Item {
 
     override def toString = s"$name, $rarity $l${details.size} slot $t"
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
 
 }
 
@@ -190,11 +211,16 @@ case class Consumable(
         flags: Set[String],
         game_types: Set[String],
         restrictions: Set[String],
-        details: ConsumableDetails) extends Detailed with Item {
+        details: ConsumableDetails,
+        buy: Option[Int],
+        sell: Option[Int]) extends Item with Detailed {
 
     override def t = details.`type`
 
     override def toMap = super.toMap ++ details.toMap
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
 
 }
 
@@ -223,38 +249,52 @@ case class ConsumableDetails(
 }
 
 case class Container(
-    id: Int,
-    chat_link: String,
-    name: String,
-    icon: Option[String],
-    description: Option[String],
-    `type`: String,
-    rarity: String,
-    level: Int,
-    vendor_value: Int,
-    default_skin: Option[Int],
-    flags: Set[String],
-    game_types: Set[String],
-    restrictions: Set[String],
-    details: ContainerDetails) extends Detailed with Item
+        id: Int,
+        chat_link: String,
+        name: String,
+        icon: Option[String],
+        description: Option[String],
+        `type`: String,
+        rarity: String,
+        level: Int,
+        vendor_value: Int,
+        default_skin: Option[Int],
+        flags: Set[String],
+        game_types: Set[String],
+        restrictions: Set[String],
+        details: ContainerDetails,
+        buy: Option[Int],
+        sell: Option[Int]) extends Item with Detailed {
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
+
+}
 
 case class ContainerDetails(
     `type`: String) extends Details
 
 case class CraftingMaterial(
-    id: Int,
-    chat_link: String,
-    name: String,
-    icon: Option[String],
-    description: Option[String],
-    `type`: String,
-    rarity: String,
-    level: Int,
-    vendor_value: Int,
-    default_skin: Option[Int],
-    flags: Set[String],
-    game_types: Set[String],
-    restrictions: Set[String]) extends Item
+        id: Int,
+        chat_link: String,
+        name: String,
+        icon: Option[String],
+        description: Option[String],
+        `type`: String,
+        rarity: String,
+        level: Int,
+        vendor_value: Int,
+        default_skin: Option[Int],
+        flags: Set[String],
+        game_types: Set[String],
+        restrictions: Set[String],
+        buy: Option[Int],
+        sell: Option[Int]) extends Item {
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
+
+}
 
 case class GatheringTool(
         id: Int,
@@ -270,9 +310,14 @@ case class GatheringTool(
         flags: Set[String],
         game_types: Set[String],
         restrictions: Set[String],
-        details: GatheringToolDetails) extends Detailed with Item {
+        details: GatheringToolDetails,
+        buy: Option[Int],
+        sell: Option[Int]) extends Item with Detailed {
 
     override def t = details.`type`
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
 
 }
 
@@ -280,54 +325,75 @@ case class GatheringToolDetails(
     `type`: String) extends Details
 
 case class Gizmo(
-    id: Int,
-    chat_link: String,
-    name: String,
-    icon: Option[String],
-    description: Option[String],
-    `type`: String,
-    rarity: String,
-    level: Int,
-    vendor_value: Int,
-    default_skin: Option[Int],
-    flags: Set[String],
-    game_types: Set[String],
-    restrictions: Set[String],
-    details: GizmoDetails) extends Detailed with Item
+        id: Int,
+        chat_link: String,
+        name: String,
+        icon: Option[String],
+        description: Option[String],
+        `type`: String,
+        rarity: String,
+        level: Int,
+        vendor_value: Int,
+        default_skin: Option[Int],
+        flags: Set[String],
+        game_types: Set[String],
+        restrictions: Set[String],
+        details: GizmoDetails,
+        buy: Option[Int],
+        sell: Option[Int]) extends Item with Detailed {
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
+
+}
 
 case class GizmoDetails(
     `type`: String) extends Details
 
 case class Key(
-    id: Int,
-    chat_link: String,
-    name: String,
-    icon: Option[String],
-    description: Option[String],
-    `type`: String,
-    rarity: String,
-    level: Int,
-    vendor_value: Int,
-    default_skin: Option[Int],
-    flags: Set[String],
-    game_types: Set[String],
-    restrictions: Set[String]) extends Item
+        id: Int,
+        chat_link: String,
+        name: String,
+        icon: Option[String],
+        description: Option[String],
+        `type`: String,
+        rarity: String,
+        level: Int,
+        vendor_value: Int,
+        default_skin: Option[Int],
+        flags: Set[String],
+        game_types: Set[String],
+        restrictions: Set[String],
+        buy: Option[Int],
+        sell: Option[Int]) extends Item {
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
+
+}
 
 case class MiniPet(
-    id: Int,
-    chat_link: String,
-    name: String,
-    icon: Option[String],
-    description: Option[String],
-    `type`: String,
-    rarity: String,
-    level: Int,
-    vendor_value: Int,
-    default_skin: Option[Int],
-    flags: Set[String],
-    game_types: Set[String],
-    restrictions: Set[String],
-    details: MiniPetDetails) extends Item
+        id: Int,
+        chat_link: String,
+        name: String,
+        icon: Option[String],
+        description: Option[String],
+        `type`: String,
+        rarity: String,
+        level: Int,
+        vendor_value: Int,
+        default_skin: Option[Int],
+        flags: Set[String],
+        game_types: Set[String],
+        restrictions: Set[String],
+        details: MiniPetDetails,
+        buy: Option[Int],
+        sell: Option[Int]) extends Item {
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
+
+}
 
 case class MiniPetDetails(
     minipet_id: Int)
@@ -346,9 +412,14 @@ case class Tool(
         flags: Set[String],
         game_types: Set[String],
         restrictions: Set[String],
-        details: ToolDetails) extends Detailed with Item {
+        details: ToolDetails,
+        buy: Option[Int],
+        sell: Option[Int]) extends Item with Detailed {
 
     override def t = details.`type`
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
 
 }
 
@@ -357,19 +428,26 @@ case class ToolDetails(
     charges: Int) extends Details
 
 case class Trait(
-    id: Int,
-    chat_link: String,
-    name: String,
-    icon: Option[String],
-    description: Option[String],
-    `type`: String,
-    rarity: String,
-    level: Int,
-    vendor_value: Int,
-    default_skin: Option[Int],
-    flags: Set[String],
-    game_types: Set[String],
-    restrictions: Set[String]) extends Item
+        id: Int,
+        chat_link: String,
+        name: String,
+        icon: Option[String],
+        description: Option[String],
+        `type`: String,
+        rarity: String,
+        level: Int,
+        vendor_value: Int,
+        default_skin: Option[Int],
+        flags: Set[String],
+        game_types: Set[String],
+        restrictions: Set[String],
+        buy: Option[Int],
+        sell: Option[Int]) extends Item {
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
+
+}
 
 case class Trinket(
         id: Int,
@@ -385,9 +463,14 @@ case class Trinket(
         flags: Set[String],
         game_types: Set[String],
         restrictions: Set[String],
-        details: TrinketDetails) extends Detailed with Item {
+        details: TrinketDetails,
+        buy: Option[Int],
+        sell: Option[Int]) extends Item with Detailed {
 
     override def t = details.`type`
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
 
 }
 
@@ -400,19 +483,26 @@ case class TrinketDetails(
     stat_choices: Option[List[Int]]) extends Details
 
 case class Trophy(
-    id: Int,
-    chat_link: String,
-    name: String,
-    icon: Option[String],
-    description: Option[String],
-    `type`: String,
-    rarity: String,
-    level: Int,
-    vendor_value: Int,
-    default_skin: Option[Int],
-    flags: Set[String],
-    game_types: Set[String],
-    restrictions: Set[String]) extends Item
+        id: Int,
+        chat_link: String,
+        name: String,
+        icon: Option[String],
+        description: Option[String],
+        `type`: String,
+        rarity: String,
+        level: Int,
+        vendor_value: Int,
+        default_skin: Option[Int],
+        flags: Set[String],
+        game_types: Set[String],
+        restrictions: Set[String],
+        buy: Option[Int],
+        sell: Option[Int]) extends Item {
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
+
+}
 
 case class UpgradeComponent(
         id: Int,
@@ -428,9 +518,14 @@ case class UpgradeComponent(
         flags: Set[String],
         game_types: Set[String],
         restrictions: Set[String],
-        details: UpgradeComponentDetails) extends Detailed with Item {
+        details: UpgradeComponentDetails,
+        buy: Option[Int],
+        sell: Option[Int]) extends Item with Detailed {
 
     override def t = details.`type`
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
 
 }
 
@@ -461,9 +556,14 @@ case class Weapon(
         flags: Set[String],
         game_types: Set[String],
         restrictions: Set[String],
-        details: WeaponDetails) extends Detailed with Item {
+        details: WeaponDetails,
+        buy: Option[Int],
+        sell: Option[Int]) extends Item with Detailed {
 
     override def t = details.`type`
+
+    def withPrices(b: Option[Int], s: Option[Int]) =
+        copy(buy = b, sell = s)
 
 }
 
@@ -486,49 +586,49 @@ object ItemProtocols extends DefaultJsonProtocol {
     implicit val fmtInfixUpgrade = jsonFormat3(InfixUpgrade)
     implicit val fmtInfusionSlot = jsonFormat2(InfusionSlot)
     implicit val fmtArmorDetails = jsonFormat8(ArmorDetails)
-    implicit val fmtArmor = jsonFormat14(Armor)
+    implicit val fmtArmor = jsonFormat16(Armor)
 
     implicit val fmtBackDetails = jsonFormat5(BackDetails)
-    implicit val fmtBack = jsonFormat14(Back)
+    implicit val fmtBack = jsonFormat16(Back)
 
     implicit val fmtBagDetails = jsonFormat2(BagDetails)
-    implicit val fmtBag = jsonFormat14(Bag)
+    implicit val fmtBag = jsonFormat16(Bag)
 
     implicit val fmtConsumableDetails = jsonFormat9(ConsumableDetails)
-    implicit val fmtConsumable = jsonFormat14(Consumable)
+    implicit val fmtConsumable = jsonFormat16(Consumable)
 
     implicit val fmtContainerDetails = jsonFormat1(ContainerDetails)
-    implicit val fmtContainer = jsonFormat14(Container)
+    implicit val fmtContainer = jsonFormat16(Container)
 
-    implicit val fmtCraftingMaterial = jsonFormat13(CraftingMaterial)
+    implicit val fmtCraftingMaterial = jsonFormat15(CraftingMaterial)
 
     implicit val fmtGatheringDetails = jsonFormat1(GatheringToolDetails)
-    implicit val fmtGathering = jsonFormat14(GatheringTool)
+    implicit val fmtGathering = jsonFormat16(GatheringTool)
 
     implicit val fmtGizmoDetails = jsonFormat1(GizmoDetails)
-    implicit val fmtGizmo = jsonFormat14(Gizmo)
+    implicit val fmtGizmo = jsonFormat16(Gizmo)
 
-    implicit val fmtKey = jsonFormat13(Key)
+    implicit val fmtKey = jsonFormat15(Key)
 
     implicit val fmtMiniPetDetails = jsonFormat1(MiniPetDetails)
-    implicit val fmtMiniPet = jsonFormat14(MiniPet)
+    implicit val fmtMiniPet = jsonFormat16(MiniPet)
 
     implicit val fmtToolDetails = jsonFormat2(ToolDetails)
-    implicit val fmtTool = jsonFormat14(Tool)
+    implicit val fmtTool = jsonFormat16(Tool)
 
-    implicit val fmtTrait = jsonFormat13(Trait)
+    implicit val fmtTrait = jsonFormat15(Trait)
 
     implicit val fmtTrinketDetails = jsonFormat6(TrinketDetails)
-    implicit val fmtTrinket = jsonFormat14(Trinket)
+    implicit val fmtTrinket = jsonFormat16(Trinket)
 
-    implicit val fmtTrophy = jsonFormat13(Trophy)
+    implicit val fmtTrophy = jsonFormat15(Trophy)
 
     implicit val fmtUpgradeInfixUpgrade = jsonFormat3(UpgradeInfixUpgrade)
     implicit val fmtUpgradeComponentDetails = jsonFormat6(UpgradeComponentDetails)
-    implicit val fmtUpgradeComponent = jsonFormat14(UpgradeComponent)
+    implicit val fmtUpgradeComponent = jsonFormat16(UpgradeComponent)
 
     implicit val fmtWeaponDetails = jsonFormat10(WeaponDetails)
-    implicit val fmtWeapon = jsonFormat14(Weapon)
+    implicit val fmtWeapon = jsonFormat16(Weapon)
 
     implicit object ItemFormat extends RootJsonFormat[Item] {
         def write(i: Item) = i.toJson

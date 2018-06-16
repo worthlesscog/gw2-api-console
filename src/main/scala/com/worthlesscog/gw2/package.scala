@@ -5,6 +5,7 @@ import java.nio.file.Paths
 import scala.language.postfixOps
 
 import com.typesafe.scalalogging.Logger
+import com.worthlesscog.gw2.Utils.{ mapRecipeItems, mapSkinItems }
 
 package object gw2 {
 
@@ -12,18 +13,18 @@ package object gw2 {
         def |>[B](f: A => B): B = f(a)
     }
 
-    val ACHIEVEMENTS = "gw2-achievements.dat"
-    val ACHIEVEMENT_CATEGORIES = "gw2-categories.dat"
-    val ACHIEVEMENT_GROUPS = "gw2-groups.dat"
-    val COLORS = "gw2-colors.dat"
-    val ITEMS = "gw2-items.dat"
-    val ITEM_STATS = "gw2-item-stats.dat"
-    val MASTERIES = "gw2-masteries.dat"
-    val MINIS = "gw2-minis.dat"
-    val RACES = "gw2-races.dat"
-    val RECIPES = "gw2-recipes.dat"
-    val SKINS = "gw2-skins.dat"
-    val TITLES = "gw2-titles.dat"
+    val ACHIEVEMENTS = "gw2-achievements.gw2"
+    val ACHIEVEMENT_CATEGORIES = "gw2-categories.gw2"
+    val ACHIEVEMENT_GROUPS = "gw2-groups.gw2"
+    val COLORS = "gw2-colors.gw2"
+    val ITEMS = "gw2-items.gw2"
+    val ITEM_STATS = "gw2-item-stats.gw2"
+    val MASTERIES = "gw2-masteries.gw2"
+    val MINIS = "gw2-minis.gw2"
+    val RACES = "gw2-races.gw2"
+    val RECIPES = "gw2-recipes.gw2"
+    val SKINS = "gw2-skins.gw2"
+    val TITLES = "gw2-titles.gw2"
 
     val SETTINGS = ".gw2-api-console.settings"
     val TICK = "*"
@@ -46,16 +47,16 @@ package object gw2 {
         new TitlesCommand,
         new TokenCommand,
         new UnlockedCommand,
-        new UpdateCommand,
+        // new UpdateCommand,
         new WeaponsCommand)
 
     lazy val config = new Config(home)
     lazy val home = Paths.get(System.getProperty("user.home"))
-    lazy val loader = new Loader
     lazy val log = Logger("GW2")
     lazy val root = "https://api.guildwars2.com/v2"
 
     var accountAchievements = Map.empty[Int, AccountAchievement]
+    var accountBuys = Map.empty[Int, AccountBuy]
     var accountDyes = Set.empty[Int]
     var accountMinis = Set.empty[Int]
     var accountRecipes = Set.empty[Int]
@@ -77,11 +78,13 @@ package object gw2 {
 
     var achievementFlags = Set.empty[String]
     var achievementTypes = Set.empty[String]
+    // var armor = Map.empty[Int, Armor]
     var armorSkins = Map.empty[Int, ArmorSkin]
     var armorTypes = Set.empty[String]
     var armorWeights = Set.empty[String]
     var collections = Map.empty[Int, Achievement]
     var colorCategories = Set.empty[String]
+    var consumables = Map.empty[Int, Consumable]
     var disciplines = Set.empty[String]
     var itemFlags = Set.empty[String]
     var itemTypes = Set.empty[String]
@@ -92,5 +95,9 @@ package object gw2 {
     var skinTypes = Set.empty[String]
     var weaponSkins = Map.empty[Int, WeaponSkin]
     var weaponTypes = Set.empty[String]
+    // var weapons = Map.empty[Int, Weapon]
+
+    lazy val recipeItems = mapRecipeItems
+    lazy val skinToItems = mapSkinItems
 
 }

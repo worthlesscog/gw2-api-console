@@ -8,6 +8,9 @@ import scala.language.{ postfixOps, reflectiveCalls }
 import scala.reflect.ClassTag
 
 import GuildWarsData.dyeSets
+import scala.util.Try
+import scala.util.Success
+import scala.util.Failure
 
 object Utils {
 
@@ -42,15 +45,10 @@ object Utils {
                 }
         }
 
-    def consumables[K, V](m: Map[K, V]) = m flatMap {
-        case (i, c: Consumable) => Some(i -> c)
-        case _                  => None
-    }
-
     def detailTypesOf[V <: Detailed](m: Map[_, V]) =
         m map { case (_, v) => v.details.`type` } toSet
 
-    def dump[K, V](s: ((K, V), (K, V)) => Boolean, f: V => String, limit: Int = 0)(m: Map[K, V]) =
+    def dump[K, V](s: ((K, V), (K, V)) => Boolean, f: V => String, t: Option[Map[K, V] => Option[String]] = None, limit: Int = 0)(m: Map[K, V]) =
         if (m nonEmpty) {
             val fmt = "  %-" + (m.keys |> longest) + "s  %s\n"
             val sorted = m.toSeq.sortWith(s)
@@ -59,19 +57,23 @@ object Utils {
                 case (k, v) =>
                     fmt.format(k, f(v)) |> info
             }
+            t foreach {
+                _(m) foreach { fmt.format("", _) |> info }
+            }
         }
 
     def dumpAndTally[K, V](s: ((K, V), (K, V)) => Boolean, f: V => String, limit: Int = 0)(m: Map[K, V]) = {
-        m |> dump(s, f, limit)
+        m |> dump(s, f, None, limit)
         f"${if (limit > 0) m.size.min(limit) else m.size}%d row(s)\n" |> info
     }
 
-    def dumpCollections[V <: Collected[V] with Id[Int] with Named](f: V => String)(m: Map[String, Iterable[V]]) = {
+    def dumpCollections[V <: Collected[V] with Id[Int] with Named](f: V => String, t: Option[Map[Int, V] => Option[String]] = None)(m: Map[String, Iterable[V]]) = {
         val sorted = SortedMap[String, Iterable[V]]() ++ m
         sorted foreach {
             case (c, vs) =>
                 s"$c\n" |> info
-                (vs map { v => v.id -> v } toMap) |> dump(byName, f)
+                val m = (vs map { v => v.id -> v } toMap)
+                m |> dump(byName, f, t)
         }
     }
 
@@ -96,36 +98,45 @@ object Utils {
 
     def isNumeric(s: String) = s forall { _.isDigit }
 
+    def isTradeable[T <: Flagged](t: T) =
+        t |> notFlagged(Set("AccountBound", "SoulbindOnAcquire"))
+
+    //    def isVisible[T <: Flagged](t: T) =
+    //        t |> notFlagged(Set("Hidden"))
+
     def itemSets[K](m: Map[K, Achievement]) =
         m filter { case (_, a) => a.`type` == "ItemSet" && a.bits.nonEmpty && a.bits.get.size > 1 }
 
     def load() = {
         config.token foreach { t =>
-            accountAchievements = loader.downloadAuthenticatedBlobs(AccountAchievements, t)
-            accountDyes = loader.downloadAuthenticatedIds(AccountDyes, t)
-            accountMinis = loader.downloadAuthenticatedIds(AccountMinis, t)
-            accountRecipes = loader.downloadAuthenticatedIds(AccountRecipes, t)
-            accountSkins = loader.downloadAuthenticatedIds(AccountSkins, t)
-            accountTitles = loader.downloadAuthenticatedIds(AccountTitles, t)
+            accountAchievements = Loader.downloadAuthenticatedBlobs(AccountAchievements, t)
+            accountBuys = Loader.downloadAuthenticatedBlobs(AccountBuys, t)
+            accountDyes = Loader.downloadAuthenticatedIds(AccountDyes, t)
+            accountMinis = Loader.downloadAuthenticatedIds(AccountMinis, t)
+            accountRecipes = Loader.downloadAuthenticatedIds(AccountRecipes, t)
+            accountSkins = Loader.downloadAuthenticatedIds(AccountSkins, t)
+            accountTitles = Loader.downloadAuthenticatedIds(AccountTitles, t)
         }
 
-        achievementCategories = home.resolve(ACHIEVEMENT_CATEGORIES) |> loader.loadPersistentMap(AchievementCategories)
-        achievementGroups = home.resolve(ACHIEVEMENT_GROUPS) |> loader.loadPersistentMap(AchievementGroups)
-        achievements = home.resolve(ACHIEVEMENTS) |> loader.loadPersistentMap(Achievements)
-        colors = home.resolve(COLORS) |> loader.loadPersistentMap(Colors) |> updateCollectionsFromData(dyeSets)
-        itemStats = home.resolve(ITEM_STATS) |> loader.loadPersistentMap(ItemStats)
-        items = home.resolve(ITEMS) |> loader.loadPersistentMap(Items)
-        masteries = home.resolve(MASTERIES) |> loader.loadPersistentMap(Masteries)
-        minis = home.resolve(MINIS) |> loader.loadPersistentMap(Minis) |> updateCollectionsFromAchievements("Minipet")
-        races = home.resolve(RACES) |> loader.loadPersistentMap(Races)
-        recipes = home.resolve(RECIPES) |> loader.loadPersistentMap(Recipes)
-        skins = home.resolve(SKINS) |> loader.loadPersistentMap(Skins) |> updateCollectionsFromAchievements("Skin")
-        titles = home.resolve(TITLES) |> loader.loadPersistentMap(Titles)
+        achievementCategories = loadAchievementCategories
+        achievementGroups = loadAchievementGroups
+        achievements = loadAchievements(achievementGroups, achievementCategories)
+        colors = loadColors
+        itemStats = loadItemStats
+        items = loadItems
+        masteries = loadMasteries
+        minis = loadMinis
+        races = loadRaces
+        recipes = loadRecipes
+        skins = loadSkins
+        titles = loadTitles
 
         achievementFlags = flagsOf(achievements)
         achievementTypes = typesOf(achievements)
+        // armor = select[Int, Armor](items)
         collections = achievements |> itemSets
         colorCategories = colors.values.flatMap { _.categories }.toSet
+        consumables = select[Int, Consumable](items)
         disciplines = recipes.values.flatMap { _.disciplines }.toSet
         itemFlags = flagsOf(items)
         itemTypes = typesOf(items)
@@ -134,6 +145,7 @@ object Utils {
         recipeTypes = typesOf(recipes)
         skinFlags = flagsOf(skins)
         skinTypes = typesOf(skins)
+        // weapons = select[Int, Weapon](items)
 
         armorSkins = select[Int, ArmorSkin](skins)
         weaponSkins = select[Int, WeaponSkin](skins)
@@ -143,11 +155,68 @@ object Utils {
         weaponTypes = detailTypesOf(weaponSkins)
     }
 
+    def loadAchievementCategories =
+        home.resolve(ACHIEVEMENT_CATEGORIES) |> Loader.loadPersistentMap(AchievementCategories)
+
+    def loadAchievementGroups =
+        home.resolve(ACHIEVEMENT_GROUPS) |> Loader.loadPersistentMap(AchievementGroups)
+
+    def loadAchievements(groups: Map[String, AchievementGroup], categories: Map[Int, AchievementCategory]) = {
+        // val currentAchievementIds = groups.values.flatMap { _.categories flatMap { categories(_).achievements } }.toSet
+        home.resolve(ACHIEVEMENTS) |> Loader.loadPersistentMap(Achievements) // |> presentIn(currentAchievementIds)
+    }
+
+    def loadColors =
+        home.resolve(COLORS) |> Loader.loadPersistentMap(Colors) |> updateCollectionsFromData(dyeSets)
+
+    def loadItemStats =
+        home.resolve(ITEM_STATS) |> Loader.loadPersistentMap(ItemStats)
+
+    def loadItems =
+        home.resolve(ITEMS) |> Loader.loadPersistentMap(Items)
+
+    def loadMasteries =
+        home.resolve(MASTERIES) |> Loader.loadPersistentMap(Masteries)
+
+    def loadMinis =
+        home.resolve(MINIS) |> Loader.loadPersistentMap(Minis) |> updateCollectionsFromAchievements("Minipet")
+
+    def loadRaces =
+        home.resolve(RACES) |> Loader.loadPersistentMap(Races)
+
+    def loadRecipes =
+        home.resolve(RECIPES) |> Loader.loadPersistentMap(Recipes)
+
+    def loadSkins =
+        home.resolve(SKINS) |> Loader.loadPersistentMap(Skins) |> updateCollectionsFromAchievements("Skin")
+
+    def loadTitles =
+        home.resolve(TITLES) |> Loader.loadPersistentMap(Titles)
+
     def longest(i: Traversable[_]) =
         i map { _.toString length } max
 
+    def mapRecipeItems =
+        consumables filter { case (_, c) => c.details.unlock_type.contains("CraftingRecipe") }
+
+    def mapSkinItems = {
+        val (ts, other) = (items |> tradeable).values partition {
+            case c: Consumable => c.details.`type` == "Transmutation"
+            case _             => false
+        }
+        val plain = other filter { _.default_skin nonEmpty } groupBy { _.default_skin get } map { case (k, it) => k -> it.map { _.id }.toSeq }
+        ts.foldLeft(plain) {
+            case (m, t: Consumable) =>
+                t.details.skins.fold(m) { _.foldLeft(m) { (m, i) => m + (i -> (m.getOrElse(i, Seq.empty[Int]) :+ t.id)) } }
+        }
+    }
+
     def matchingName[K, V <: Named](c: String)(m: Map[K, V]) =
         m filter { case (_, i) => i.name.contains(c) }
+
+    def nameOrId[V <: Named](m: Map[Int, V], id: Int) = m.get(id).fold(s"#$id") { _.name }
+
+    def newLine = "\n" |> info
 
     def noneOrCommas(o: Option[Iterable[_]]) =
         o.fold("None") { _.mkString(", ") }
@@ -161,17 +230,20 @@ object Utils {
     def noneOrStrings(os: Traversable[Option[_]]) =
         os.map { noneOrString(_) } mkString ", "
 
-    def notFlagged[K, V <: Flagged](f: String)(m: Map[K, V]) =
-        m filter { case (_, r) => !(r.flags contains f) }
+    def notFlagged[K, V <: Flagged](fs: Set[String])(m: Map[K, V]): Map[K, V] =
+        m filter { case (_, v) => v |> notFlagged(fs) }
+
+    def notFlagged[T <: Flagged](fs: Set[String])(t: T) =
+        t.flags intersect fs isEmpty
 
     def ofDetailType[K, V <: Detailed](t: String)(m: Map[K, V]) =
-        m filter { case (_, r) => r.details.`type` == t }
+        m filter { case (_, v) => v.details.`type` == t }
 
     def ofType[K, V <: Typed](t: String)(m: Map[K, V]) =
-        m filter { case (_, r) => r.`type` == t }
+        m filter { case (_, v) => v.`type` == t }
 
     def ofWeight[K](t: String)(m: Map[K, ArmorSkin]) =
-        m filter { case (_, r) => r.details.weight_class == t }
+        m filter { case (_, s) => s.details.weight_class == t }
 
     def ois(p: Path) = new ObjectInputStream(p |> fis)
 
@@ -180,60 +252,100 @@ object Utils {
     def optLabelledFloat(o: Option[Float], l: String) =
         o.fold(None: Option[String]) { f => Some(l + " " + f) }
 
-    def optSellPrice[T <: Priced[T]](t: T) =
-        t.sell.fold("")(", " + toStringPrice(_))
+    def optPrice(p: Option[Int], label: String) =
+        p map { label + toStringPrice(_) }
 
     def presentIn[K, V](s: Set[K])(m: Map[K, V]) =
         m filter { case (k, _) => s contains k }
 
-    def recipeItems =
-        items |> consumables filter { case (_, c) => c.details.unlock_type.contains("CraftingRecipe") }
+    def prices[T <: Priced[T]](t: T) = {
+        val ps = List(optPrice(t.buy, "B "), optPrice(t.sell, "S ")).flatten
+        if (ps isEmpty) "" else ps.mkString(", ", ", ", "")
+    }
 
-    def reprice[T <: Id[Int] with Priced[T]](m: Map[Int, T], byItem: Map[Int, T]) = {
-        val prices = byItem.keys |> Commerce.prices
-        prices.foldLeft(m) {
-            case (m, (i, p)) =>
-                val nc = byItem(i)
-                m + (nc.id -> (nc |> updatePrice(p)))
+    def price[T <: Id[Int] with Priced[T]](m: Map[Int, T], toItem: Map[T, Seq[Int]]) = {
+        val ids = toItem.values.flatten.toSet filter { items.get(_).fold(false) { i => i.isUnpriced && isTradeable(i) } }
+        if (ids nonEmpty) {
+            val prices = ids |> Commerce.prices
+            val itemUpdates = prices map { case (i, p) => i -> (items(i) |> updatePrice(p)) }
+            items = items ++ itemUpdates
         }
+        val updates = toItem.foldLeft(Map.empty[Int, T]) {
+            case (m, (t, i)) =>
+                val is = i flatMap { items.get } filter { i => i.sell.nonEmpty && i.sell.get > 0 } sortBy { _.sell.get }
+                is.headOption.foldLeft(m) { case (m, i) => m + (t.id -> (t |> updatePrice(i.price))) }
+        }
+        m ++ updates
     }
 
-    def repriceByItem[T <: Id[Int] with Itemized with Priced[T]](m: Map[Int, T]) = {
-        val byItem = m flatMap { case (_, t) => t.item.map { _ -> t } }
-        reprice(m, byItem)
+    def priceByItem[T <: Id[Int] with Itemized with Priced[T]](m: Map[Int, T]) = {
+        val toItem = m flatMap { case (_, t) => t.item.map { t -> Seq(_) } }
+        price(m, toItem)
     }
 
-    def repriceRecipe(m: Map[Int, Recipe]) = {
-        val ri = recipeItems |> notFlagged("AccountBound")
-        val byItem = m flatMap { case (_, r) => ri.find { case (_, c) => c.details.recipe_id.contains(r.id) }.map { case (i, _) => i -> r } }
-        reprice(m, byItem)
+    def priceItems(m: Map[Int, Item]) = {
+        val toItem = unpriced(m) map {
+            case (_, i) => i -> Seq(i.id)
+        }
+        price(m, toItem)
     }
 
-    def repriceSkin(m: Map[Int, Skin]) = {
-        val si = skinItems
-        val byItem = m flatMap { case (_, s) => si.find { case (_, c) => c.details.skins.forall { _.contains(s.id) } }.map { case (i, _) => i -> s } }
-        reprice(m, byItem)
+    def priceMinis(m: Map[Int, Mini]) = {
+        val toItem = unpriced(m) flatMap {
+            case (_, p) => items.get(p.item_id) map { i => p -> Seq(i.id) }
+        }
+        price(m, toItem)
     }
+
+    def priceRecipes(m: Map[Int, Recipe]) = {
+        val ri = recipeItems
+        val toItem = unpriced(m) flatMap {
+            case (_, r) => ri.find { case (_, c) => c.details.recipe_id.contains(r.id) }.map { case (i, _) => r -> Seq(i) }
+        }
+        price(m, toItem)
+    }
+
+    def priceSkins[K](m: Map[Int, Skin]) = {
+        val toItem = unpriced(m) flatMap {
+            case (_, s) => skinToItems.get(s.id) map { s -> _ }
+        }
+        price(m, toItem)
+    }
+
+    def retry[T](n: Int)(f: => T): Either[Throwable, T] =
+        Try {
+            f
+        } match {
+            case Success(t) => Right(t)
+            case _ if n > 1 =>
+                // XXX - backoff
+                retry(n - 1)(f)
+            case Failure(x) => Left(x)
+        }
 
     def saveObject[A](p: Path)(a: A): A = {
         using(p |> oos) { _.writeObject(a) }
         a
     }
 
-    def select[K, T](m: Map[K, _ >: T])(implicit tag: ClassTag[T]) = m flatMap {
-        case (k, t: T) => Some(k -> t)
-        case _         => None
-    }
+    def select[K, T](m: Map[K, _ >: T])(implicit tag: ClassTag[T]) =
+        m flatMap {
+            case (k, t: T) => Some(k -> t)
+            case _         => None
+        }
 
-    def skinItems =
-        items |> consumables filter { case (_, c) => c.details.`type` == "Transmutation" }
+    def sellPrice[T <: Priced[T]](t: T) = {
+        val p = optPrice(t.sell, "S ")
+        if (p isEmpty) "" else ", " + p.get
+    }
 
     def splitAndBar(s: String) = s split ("(?=\\p{Upper})") map (_.toLowerCase) mkString "_"
 
-    def tickedAndPriced[T <: Id[Int] with Named with Priced[T]](s: Set[Int])(c: T): String = {
-        val (state, price) = if (s contains c.id) (TICK, "") else (" ", optSellPrice(c))
-        s"$state  ${c.name}$price"
-    }
+    def tickedAndPriced[T <: Id[Int] with Named with Priced[T]](s: Set[Int])(c: T): String =
+        if (s contains c.id)
+            s"$TICK  ${c.name}${sellPrice(c)}"
+        else
+            s"   ${c.name}${prices(c)}"
 
     def ticked[T <: Id[Int] with Named](s: Set[Int])(c: T): String = {
         val state = if (s contains c.id) TICK else " "
@@ -241,7 +353,10 @@ object Utils {
     }
 
     def toCollections[T <: Collected[T]](m: Map[_, T]) =
-        m.values filter { _.collection.nonEmpty } groupBy { _.collection.get }
+        (m |> collectable).values groupBy { _.collection.get }
+
+    def toMap[T <: Id[Int]](ts: Iterable[T]) =
+        ts map { t => t.id -> t } toMap
 
     def toStringPrice(i: Int) = {
         val (g, s, c) = (i / 10000, i / 100 % 100, i % 100)
@@ -251,8 +366,14 @@ object Utils {
         gs + ss + cs
     }
 
+    def tradeable[K, V <: Flagged](m: Map[K, V]) =
+        m |> notFlagged(Set("AccountBound", "SoulbindOnAcquire"))
+
     def typesOf[V <: Typed](m: Map[_, V]) =
         m.values map { _.`type` } toSet
+
+    def unpriced[K, V <: Priced[V]](m: Map[K, V]) =
+        m filter { case (_, v) => v.isUnpriced }
 
     // XXX - dirty
     def updateCollectionsFromAchievements[V <: Collected[V]](progressType: String)(m: Map[Int, V]) =
@@ -278,6 +399,9 @@ object Utils {
 
     def updatePrice[T <: Priced[T]](p: Price)(t: T) =
         t.withPrices(Some(p.buys.fold(0)(_.unit_price)), Some(p.sells.fold(0)(_.unit_price)))
+
+    def updatePrice[T <: Priced[T]](p: (Option[Int], Option[Int]))(t: T) =
+        p match { case (b, s) => t.withPrices(b, s) }
 
     def using[A <: { def close(): Unit }, B](closeable: A)(f: A => B): B =
         try { f(closeable) } finally { closeable.close() }

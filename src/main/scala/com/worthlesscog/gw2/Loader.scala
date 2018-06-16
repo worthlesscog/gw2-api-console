@@ -1,17 +1,26 @@
 package com.worthlesscog.gw2
 
-import java.io.{ FileNotFoundException, InputStream }
+import java.io.InputStream
 import java.net.URL
 import java.nio.file.{ Files, Path }
 
 import scala.language.postfixOps
 
-import Utils.{ authenticatedUrl, bis, info, ois, saveObject, using, utf8 }
+import Utils.{ authenticatedUrl, bis, info, ois, retry, saveObject, using, utf8 }
 import spray.json.JsonParser
 
-class Loader {
+object Loader {
 
     val user_agent = """Mozilla/5.0 (Windows NT 6.1; WOW64; rv:43.0) Gecko/20100101 Firefox/43.0"""
+
+    def download(url: String) =
+        using {
+            val c = new URL(url).openConnection
+            c.setRequestProperty("User-Agent", user_agent)
+            c.getInputStream |> bis
+        } {
+            loadStream
+        }
 
     def downloadAuthenticatedBlobs[K, V <: Id[K]](c: BlobCatalog[K, V], token: String) = {
         s"  Downloading ${c.name}...\n" |> info
@@ -28,20 +37,10 @@ class Loader {
         (url |> downloadJson).fold(Set.empty[K]) { c.bulkIds }
 
     def downloadJson(url: String) =
-        try {
-            val b = using {
-                val c = new URL(url).openConnection
-                c.setRequestProperty("User-Agent", user_agent)
-                c.getInputStream |> bis
-            } {
-                loadStream
-            }
-            utf8(b) |> Some.apply map { JsonParser(_) }
-        } catch {
-            case x: FileNotFoundException =>
-                // s"Resource not found ${x.getMessage}\n" |> info
-                None
-            case t: Throwable =>
+        retry(5)(download(url)) match {
+            case Right(b) =>
+                utf8(b) |> Some.apply map { JsonParser(_) }
+            case Left(t) =>
                 t.getLocalizedMessage + "\n" |> info
                 None
         }

@@ -19,9 +19,11 @@ case class Achievement(
 
     def isMeta = flags contains "CategoryDisplay"
 
+    def isVisible = !(flags contains "Hidden")
+
     def toMap = Map()
 
-    override def toString = name
+    override def toString = name + (if (!isVisible) " *" else "")
 
 }
 

@@ -32,6 +32,6 @@ object Prices extends MapCatalog[Int, Price] with IntIdCatalog {
 
 object Commerce {
 
-    def prices(ids: Iterable[Int]) = loader.downloadMap(ids, Prices)
+    def prices(ids: Iterable[Int]) = Loader.downloadMap(ids, Prices)
 
 }

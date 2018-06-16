@@ -2,15 +2,22 @@ package com.worthlesscog.gw2
 
 import scala.language.postfixOps
 
-import Utils.{ dumpAndTally, info }
+import Utils.{ dumpAndTally, info, nameOrId, prices }
 
 class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](label) {
 
     def completed(a: Achievement): String = {
         val (steps, count) = stepsDone(achievements(a.id), accountAchievements.get(a.id))
         val progress = if (count == steps) "" else s" ($count/$steps)"
-        s"${a.name}$progress"
+        val hidden = if (a.isVisible) "" else " *"
+        s"${a.name}$progress$hidden"
     }
+
+    def describeItem(id: Int) = "Item, " + nameOrId(items, id) + maybeRarity(items, id) + maybePrices(items, id)
+
+    def describeMini(id: Int) = "Mini, " + nameOrId(minis, id) + maybePrices(minis, id)
+
+    def describeSkin(id: Int) = "Skin, " + nameOrId(skins, id) + maybePrices(skins, id)
 
     override def dumpObject(a: Achievement) = {
         val aa = accountAchievements.get(a.id)
@@ -23,9 +30,9 @@ class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](la
                 case (a, n) =>
                     val state = if (ticks contains n) TICK else " "
                     val label = a match {
-                        case ItemProgress(_, id)    => id map { i => "Item, " + maybeName(items, i) + maybeRarity(items, i) }
-                        case MinipetProgress(_, id) => id map { "Mini, " + maybeName(minis, _) }
-                        case SkinProgress(_, id)    => id map { "Skin, " + maybeName(skins, _) }
+                        case ItemProgress(_, id)    => id map describeItem
+                        case MinipetProgress(_, id) => id map describeMini
+                        case SkinProgress(_, id)    => id map describeSkin
                         case TextProgress(_, text)  => text
                     }
                     s"    $state  ${label.getOrElse("")}\n" |> info
@@ -37,7 +44,20 @@ class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](la
 
     def dumpTitle(s: String, count: Int, steps: Int) = s"  $s ($count/$steps)\n" |> info
 
+    def printable(s: String) = s.filter(!_.isControl)
+
     override def execute(cmd: List[String]): Unit = cmd match {
+        case "tree" :: Nil =>
+            achievementGroups.values.filter(!_.categories.isEmpty).toList.sortBy(_.order) foreach { g =>
+                s"  ${g.name} (${g.id})\n" |> info
+                g.categories.map(achievementCategories).filter(!_.achievements.isEmpty).toList.sortBy(_.order) foreach { c =>
+                    s"    ${printable(c.name)} (${c.id})\n" |> info
+                    c.achievements.map(achievements).toList.sortBy(_.name).foreach { a =>
+                        s"      ${completed(a)}\n" |> info
+                    }
+                }
+            }
+
         case "nearly" :: Nil =>
             achievements |> started |> incomplete |> dumpAndTally(nearly, completed, 50)
 
@@ -61,12 +81,12 @@ class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](la
         (c1.toFloat / s1 < c2.toFloat / s2)
     }
 
-    def maybeName[V <: Named](m: Map[Int, V], id: Int) = m.get(id).fold(s"#$id Missing")(i => i.name)
+    def maybePrices[T <: Priced[T]](m: Map[Int, T], id: Int) = m.get(id).fold("") { prices(_) }
 
     def maybeRarity(m: Map[Int, Item], id: Int) = m.get(id).fold("")(i => ", " + i.rarity)
 
     def started(a: Achievement) = {
-        val (steps, count) = stepsDone(achievements(a.id), accountAchievements.get(a.id))
+        val (_, count) = stepsDone(achievements(a.id), accountAchievements.get(a.id))
         count > 0
     }
 
@@ -84,6 +104,6 @@ class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](la
                     aa.bits.fold(0) { _.size }
             })
 
-    override def uses = Some(Map(s"achievements [$ID_CONT_FLAG_TYPE | nearly]" -> s"list achievements"))
+    override def uses = Some(Map(s"achievements [$ID_CONT_FLAG_TYPE | nearly | tree]" -> s"list achievements"))
 
 }

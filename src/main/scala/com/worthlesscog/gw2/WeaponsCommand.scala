@@ -1,14 +1,14 @@
 package com.worthlesscog.gw2
 
-import Utils.{ asString, byName, dumpAndTally, ofDetailType }
+import Utils.{ asString, byName, dumpAndTally, ofDetailType, priceSkins }
 
-class WeaponsCommand extends Command {
+class WeaponsCommand extends SkinsCommand {
 
-    val bindings = List("weapons")
+    override val bindings = List("weapons")
 
-    def execute(cmd: List[String]): Unit = cmd match {
+    override def execute(cmd: List[String]): Unit = cmd match {
         case t :: Nil =>
-            weaponSkins |> ofDetailType(t) |> dumpAndTally(byName, asString)
+            weaponSkins |> ofDetailType(t) |> priceSkins |> dumpAndTally(byName, outbids(accountBuys))
 
         case Nil =>
             weaponSkins |> dumpAndTally(byName, asString)
@@ -16,6 +16,6 @@ class WeaponsCommand extends Command {
         case _ =>
     }
 
-    val uses = Some(Map("weapons [#type]" -> "list weapon skins"))
+    override val uses = Some(Map("weapons [#type]" -> "list weapon skins"))
 
 }

@@ -46,6 +46,8 @@ trait Named {
 trait Priced[T] {
     def buy: Option[Int]
     def sell: Option[Int]
+
+    def isUnpriced = buy.isEmpty || sell.isEmpty
     def withPrices(buy: Option[Int], sell: Option[Int]): T
 }
 
