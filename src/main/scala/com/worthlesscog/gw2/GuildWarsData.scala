@@ -5,6 +5,7 @@ import scala.collection.immutable.SortedMap
 object GuildWarsData {
 
     val dyeSets = SortedMap(
+        "Awakened" -> Set("Embalm", "Sarcophagus", "Scourge", "Tar", "Urn", "Vabbian Bronze"),
         "Bloodstone" -> Set("Bloodstone Coral", "Bloodstone Dark Coral", "Bloodstone Dark Indigo", "Bloodstone Dark Violet", "Bloodstone Indigo", "Bloodstone Violet"),
         "Blue Shift" -> Set("Baby Blue", "Blue Steel", "Ghost", "Lapis", "Phthalo Blue", "Powder Blue", "Resolution", "Valor", "Zaffre"),
         "Crimson Lion" -> Set("Aureus", "Crimson Lion", "Golden Lion", "Imperial Gold", "Imperial Red", "Rosewood"),
@@ -20,6 +21,7 @@ object GuildWarsData {
         "Lion's Arch Survivors" -> Set("Enameled Crimson", "Enameled Emblaze", "Enameled Jungle", "Enameled Legacy", "Enameled Reign", "Enameled Sky"),
         "Mad King" -> Set("Carnage Orange", "Crushed Bone", "Eerie Purple", "Ember Red", "Harrowing Maroon Dye", "Ominous Yellow"),
         "Metallurgic" -> Set("Amenity", "Fling", "Onset", "Perseverance", "Prosperity", "Recall"),
+        "Mordremoth" -> Set("Abyssal Forest", "Auric", "Arid", "Bloom", "Jungle", "Nightmare"),
         "Primordus" -> Set("Bloody Red", "Destroyer Orange", "Incandescent", "Magma", "Scorched", "Sunfire Lava"),
         "Shadow" -> Set("Shadow Abyss", "Shadow Blue", "Shadow Green", "Shadow Magenta", "Shadow Orange", "Shadow Purple", "Shadow Red", "Shadow Turquoise", "Shadow Violet", "Shadow Yellow"),
         "Solar and Lunar" -> Set("Blue Whale", "Daybreak", "Glossy Black", "Midnight Bronze", "Rose Gold", "Silver Satin"),

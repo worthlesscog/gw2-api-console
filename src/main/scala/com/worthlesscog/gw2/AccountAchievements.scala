@@ -16,7 +16,7 @@ object AccountAchievementProtocols extends DefaultJsonProtocol {
 
 }
 
-object AccountAchievements extends BlobCatalog[Int, AccountAchievement] {
+object AccountAchievements extends BlobCatalog[AccountAchievement] {
 
     import AccountAchievementProtocols._
 

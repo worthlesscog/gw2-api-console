@@ -44,22 +44,30 @@ class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](la
 
     def dumpTitle(s: String, count: Int, steps: Int) = s"  $s ($count/$steps)\n" |> info
 
-    def printable(s: String) = s.filter(!_.isControl)
-
-    override def execute(cmd: List[String]): Unit = cmd match {
-        case "tree" :: Nil =>
-            achievementGroups.values.filter(!_.categories.isEmpty).toList.sortBy(_.order) foreach { g =>
-                s"  ${g.name} (${g.id})\n" |> info
-                g.categories.map(achievementCategories).filter(!_.achievements.isEmpty).toList.sortBy(_.order) foreach { c =>
+    def dumpTree(filter: (Achievement) => Boolean) = {
+        achievementGroups.values.filter(!_.categories.isEmpty).toList.sortBy(_.order) foreach { g =>
+            s"  ${g.name} (${g.id})\n" |> info
+            g.categories.map(achievementCategories).filter(!_.achievements.isEmpty).toList.sortBy(_.order) foreach { c =>
+                val l = c.achievements.map(achievements).toList.sortBy(_.name).filter(filter)
+                if (l nonEmpty) {
                     s"    ${printable(c.name)} (${c.id})\n" |> info
-                    c.achievements.map(achievements).toList.sortBy(_.name).foreach { a =>
+                    l foreach { a =>
                         s"      ${completed(a)}\n" |> info
                     }
                 }
             }
+        }
+    }
+
+    override def execute(cmd: List[String]): Unit = cmd match {
+        case "hidden" :: Nil =>
+            dumpTree((a) => !(a.isVisible))
 
         case "nearly" :: Nil =>
             achievements |> started |> incomplete |> dumpAndTally(nearly, completed, 50)
+
+        case "tree" :: Nil =>
+            dumpTree((a) => true)
 
         case _ =>
             execute(cmd, achievements, achievementFlags, achievementTypes)
@@ -75,15 +83,17 @@ class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](la
             case (_, a) => incomplete(a)
         }
 
+    def maybePrices[T <: Priced[T]](m: Map[Int, T], id: Int) = m.get(id).fold("") { prices(_) }
+
+    def maybeRarity(m: Map[Int, Item], id: Int) = m.get(id).fold("")(i => ", " + i.rarity)
+
     def nearly(a: (_, Achievement), b: (_, Achievement)) = {
         val (c1, s1) = stepsDone(a._2, accountAchievements.get(a._2.id))
         val (c2, s2) = stepsDone(b._2, accountAchievements.get(b._2.id))
         (c1.toFloat / s1 < c2.toFloat / s2)
     }
 
-    def maybePrices[T <: Priced[T]](m: Map[Int, T], id: Int) = m.get(id).fold("") { prices(_) }
-
-    def maybeRarity(m: Map[Int, Item], id: Int) = m.get(id).fold("")(i => ", " + i.rarity)
+    def printable(s: String) = s.filter(!_.isControl)
 
     def started(a: Achievement) = {
         val (_, count) = stepsDone(achievements(a.id), accountAchievements.get(a.id))
@@ -104,6 +114,6 @@ class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](la
                     aa.bits.fold(0) { _.size }
             })
 
-    override def uses = Some(Map(s"achievements [$ID_CONT_FLAG_TYPE | nearly | tree]" -> s"list achievements"))
+    override def uses = Some(Map(s"achievements [$ID_CONT_FLAG_TYPE | hidden | nearly | tree]" -> s"list achievements"))
 
 }

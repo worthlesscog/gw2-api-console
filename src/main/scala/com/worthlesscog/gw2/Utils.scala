@@ -6,11 +6,9 @@ import java.nio.file.Path
 import scala.collection.immutable.SortedMap
 import scala.language.{ postfixOps, reflectiveCalls }
 import scala.reflect.ClassTag
+import scala.util.{ Failure, Success, Try }
 
 import GuildWarsData.dyeSets
-import scala.util.Try
-import scala.util.Success
-import scala.util.Failure
 
 object Utils {
 
@@ -113,6 +111,7 @@ object Utils {
             accountBuys = Loader.downloadAuthenticatedBlobs(AccountBuys, t)
             accountDyes = Loader.downloadAuthenticatedIds(AccountDyes, t)
             accountMinis = Loader.downloadAuthenticatedIds(AccountMinis, t)
+            accountNodes = Loader.downloadAuthenticatedIds(AccountNodes, t)
             accountRecipes = Loader.downloadAuthenticatedIds(AccountRecipes, t)
             accountSkins = Loader.downloadAuthenticatedIds(AccountSkins, t)
             accountTitles = Loader.downloadAuthenticatedIds(AccountTitles, t)
@@ -126,6 +125,7 @@ object Utils {
         items = loadItems
         masteries = loadMasteries
         minis = loadMinis
+        nodes = loadNodes
         races = loadRaces
         recipes = loadRecipes
         skins = loadSkins
@@ -180,6 +180,9 @@ object Utils {
 
     def loadMinis =
         home.resolve(MINIS) |> Loader.loadPersistentMap(Minis) |> updateCollectionsFromAchievements("Minipet")
+
+    def loadNodes =
+        home.resolve(NODES) |> Loader.loadPersistentSet(Nodes)
 
     def loadRaces =
         home.resolve(RACES) |> Loader.loadPersistentMap(Races)
@@ -318,7 +321,8 @@ object Utils {
         } match {
             case Success(t) => Right(t)
             case _ if n > 1 =>
-                // XXX - backoff
+                // XXX - simplistic backoff
+                Thread.sleep(1000)
                 retry(n - 1)(f)
             case Failure(x) => Left(x)
         }
@@ -335,8 +339,9 @@ object Utils {
         }
 
     def sellPrice[T <: Priced[T]](t: T) = {
-        val p = optPrice(t.sell, "S ")
-        if (p isEmpty) "" else ", " + p.get
+        // val p = optPrice(t.sell, "S ")
+        // if (p isEmpty) "" else ", " + p.get
+        optPrice(t.sell, "S ").fold("")(", " +)
     }
 
     def splitAndBar(s: String) = s split ("(?=\\p{Upper})") map (_.toLowerCase) mkString "_"
@@ -381,8 +386,8 @@ object Utils {
             case (m, (_, a)) =>
                 a.bits.fold(m) {
                     _.foldLeft(m) {
-                        case (m, MinipetProgress(_, Some(id))) => m + (id -> m(id).inCollection(a.name))
-                        case (m, SkinProgress(_, Some(id)))    => m + (id -> m(id).inCollection(a.name))
+                        case (m, MinipetProgress(_, Some(id))) => m.get(id).fold(m) { v => m + (id -> v.inCollection(a.name)) } // m + (id -> m(id).inCollection(a.name))
+                        case (m, SkinProgress(_, Some(id)))    => m.get(id).fold(m) { v => m + (id -> v.inCollection(a.name)) } // m + (id -> m(id).inCollection(a.name))
                         case _                                 => m
                     }
                 }

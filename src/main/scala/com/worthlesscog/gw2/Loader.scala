@@ -11,6 +11,8 @@ import spray.json.JsonParser
 
 object Loader {
 
+    val RETRIES = 10
+
     val user_agent = """Mozilla/5.0 (Windows NT 6.1; WOW64; rv:43.0) Gecko/20100101 Firefox/43.0"""
 
     def download(url: String) =
@@ -22,7 +24,7 @@ object Loader {
             loadStream
         }
 
-    def downloadAuthenticatedBlobs[K, V <: Id[K]](c: BlobCatalog[K, V], token: String) = {
+    def downloadAuthenticatedBlobs[K, V <: Id[K]](c: BlobCatalog[V], token: String) = {
         s"  Downloading ${c.name}...\n" |> info
         val l = authenticatedUrl(c.url, token) |> downloadJson map c.bulkConvert
         l.fold(Map.empty[K, V]) { _.map { v => v.id -> v } toMap }
@@ -37,7 +39,7 @@ object Loader {
         (url |> downloadJson).fold(Set.empty[K]) { c.bulkIds }
 
     def downloadJson(url: String) =
-        retry(5)(download(url)) match {
+        retry(RETRIES)(download(url)) match {
             case Right(b) =>
                 utf8(b) |> Some.apply map { JsonParser(_) }
             case Left(t) =>
@@ -59,8 +61,16 @@ object Loader {
         i map { v => v.id -> v } toMap
     }
 
+    def downloadSet[V](c: SetCatalog[V]): Set[V] = {
+        s"  Downloading ${c.name}...\n" |> info
+        c.url |> downloadIds(c)
+    }
+
     def downloadPersistentMap[K, V <: Id[K]](c: PersistentMapCatalog[K, V])(p: Path) =
         downloadMap(c) |> saveObject(p)
+
+    def downloadPersistentSet[V](c: PersistentSetCatalog[V])(p: Path) =
+        downloadSet(c) |> saveObject(p)
 
     def loadPersistentMap[K, V <: Id[K]](c: PersistentMapCatalog[K, V])(p: Path) =
         if (Files.exists(p)) {
@@ -68,6 +78,13 @@ object Loader {
             using(p |> ois) { c.read }
         } else
             downloadPersistentMap(c)(p)
+
+    def loadPersistentSet[V](c: PersistentSetCatalog[V])(p: Path) =
+        if (Files.exists(p)) {
+            s"  Loading ${c.name}...\n" |> info
+            using(p |> ois) { c.read }
+        } else
+            downloadPersistentSet(c)(p)
 
     def loadStream(s: InputStream): Array[Byte] =
         Stream.continually(s.read) takeWhile { -1 != } map { _.toByte } toArray

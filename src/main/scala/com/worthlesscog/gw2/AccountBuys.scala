@@ -16,7 +16,7 @@ object AccountBuyProtocols extends DefaultJsonProtocol {
 
 }
 
-object AccountBuys extends BlobCatalog[Int, AccountBuy] {
+object AccountBuys extends BlobCatalog[AccountBuy] {
 
     import AccountBuyProtocols._
 

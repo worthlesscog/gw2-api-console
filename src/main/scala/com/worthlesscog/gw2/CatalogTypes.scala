@@ -12,28 +12,31 @@ trait Catalog {
     def url: String
 }
 
-trait BlobCatalog[K, V] extends Catalog {
-    def bulkConvert(v: JsValue): List[V]
+trait BlobCatalog[V] extends Catalog {
+    def bulkConvert(v: JsValue): Iterable[V]
 }
 
 trait IdCatalog[K] extends Catalog {
     def bulkIds(v: JsValue): Set[K]
+    def bulkUrl(ids: Iterable[K]) = bulkIdUrl(url, ids)
 }
 
 trait IntIdCatalog extends IdCatalog[Int] {
     def bulkIds(v: JsValue) = v.convertTo[Set[Int]]
 }
 
-trait MapCatalog[K, V] extends BlobCatalog[K, V] with IdCatalog[K] {
-    def bulkUrl(ids: Iterable[K]) = bulkIdUrl(url, ids)
-}
-
-trait PersistentCatalog[K, V] extends Catalog {
-    def read(s: ObjectInputStream) = s.readObject.asInstanceOf[Map[K, V]]
-}
-
-trait PersistentMapCatalog[K, V] extends MapCatalog[K, V] with PersistentCatalog[K, V]
-
 trait StringIdCatalog extends IdCatalog[String] {
     def bulkIds(v: JsValue) = v.convertTo[Set[String]]
 }
+
+trait MapCatalog[K, V] extends IdCatalog[K] with BlobCatalog[V]
+
+trait SetCatalog[V] extends IdCatalog[V] with BlobCatalog[V]
+
+trait PersistentCatalog[T] {
+    def read(s: ObjectInputStream) = s.readObject.asInstanceOf[T]
+}
+
+trait PersistentMapCatalog[K, V] extends PersistentCatalog[Map[K, V]] with MapCatalog[K, V]
+
+trait PersistentSetCatalog[V] extends PersistentCatalog[Set[V]] with SetCatalog[V]

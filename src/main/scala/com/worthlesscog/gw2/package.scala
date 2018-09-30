@@ -21,6 +21,7 @@ package object gw2 {
     val ITEM_STATS = "gw2-item-stats.gw2"
     val MASTERIES = "gw2-masteries.gw2"
     val MINIS = "gw2-minis.gw2"
+    val NODES = "gw2-nodes.gw2"
     val RACES = "gw2-races.gw2"
     val RECIPES = "gw2-recipes.gw2"
     val SKINS = "gw2-skins.gw2"
@@ -41,6 +42,7 @@ package object gw2 {
         new ItemsCommand,
         new LockedCommand,
         new MasteriesCommand,
+        new NodesCommand,
         new PetsCommand,
         new RecipesCommand,
         new SkinsCommand,
@@ -59,6 +61,7 @@ package object gw2 {
     var accountBuys = Map.empty[Int, AccountBuy]
     var accountDyes = Set.empty[Int]
     var accountMinis = Set.empty[Int]
+    var accountNodes = Set.empty[String]
     var accountRecipes = Set.empty[Int]
     var accountSkins = Set.empty[Int]
     var accountTitles = Set.empty[Int]
@@ -71,6 +74,7 @@ package object gw2 {
     var itemStats = Map.empty[Int, ItemStatSet]
     var masteries = Map.empty[Int, Mastery]
     var minis = Map.empty[Int, Mini]
+    var nodes = Set.empty[String]
     var races = Map.empty[String, Race]
     var recipes = Map.empty[Int, Recipe]
     var skins = Map.empty[Int, Skin]
