@@ -23,6 +23,8 @@ object Utils {
 
     def bulkIdUrl(url: String, ids: Iterable[_]) = url + "?ids=" + ids.mkString(",")
 
+    def byBuyPrice[T](a: (_, Priced[T]), b: (_, Priced[T])) = Ordering[Option[Int]].lt(a._2.buy, b._2.buy)
+
     def byName[T <: Named](a: (_, T), b: (_, T)) = a._2.name < b._2.name
 
     def categorized[K, V <: Categorized](c: String)(m: Map[K, V]) =
@@ -96,33 +98,21 @@ object Utils {
 
     def isNumeric(s: String) = s forall { _.isDigit }
 
+    def isPriced[K, V <: Priced[_]](m: Map[K, V]) = m filter { case (_, v) => v.sell.nonEmpty && v.sell.get > 0 }
+
     def isTradeable[T <: Flagged](t: T) =
         t |> notFlagged(Set("AccountBound", "SoulbindOnAcquire"))
-
-    //    def isVisible[T <: Flagged](t: T) =
-    //        t |> notFlagged(Set("Hidden"))
 
     def itemSets[K](m: Map[K, Achievement]) =
         m filter { case (_, a) => a.`type` == "ItemSet" && a.bits.nonEmpty && a.bits.get.size > 1 }
 
     def load() = {
-        config.token foreach { t =>
-            accountAchievements = Loader.downloadAuthenticatedBlobs(AccountAchievements, t)
-            accountBuys = Loader.downloadAuthenticatedBlobs(AccountBuys, t)
-            accountDyes = Loader.downloadAuthenticatedIds(AccountDyes, t)
-            accountMinis = Loader.downloadAuthenticatedIds(AccountMinis, t)
-            accountNodes = Loader.downloadAuthenticatedIds(AccountNodes, t)
-            accountRecipes = Loader.downloadAuthenticatedIds(AccountRecipes, t)
-            accountSkins = Loader.downloadAuthenticatedIds(AccountSkins, t)
-            accountTitles = Loader.downloadAuthenticatedIds(AccountTitles, t)
-        }
-
         achievementCategories = loadAchievementCategories
         achievementGroups = loadAchievementGroups
-        achievements = loadAchievements(achievementGroups, achievementCategories)
+        achievements = loadAchievements
         colors = loadColors
-        itemStats = loadItemStats
         items = loadItems
+        itemStats = loadItemStats
         masteries = loadMasteries
         minis = loadMinis
         nodes = loadNodes
@@ -131,70 +121,47 @@ object Utils {
         skins = loadSkins
         titles = loadTitles
 
-        achievementFlags = flagsOf(achievements)
-        achievementTypes = typesOf(achievements)
-        // armor = select[Int, Armor](items)
-        collections = achievements |> itemSets
-        colorCategories = colors.values.flatMap { _.categories }.toSet
-        consumables = select[Int, Consumable](items)
-        disciplines = recipes.values.flatMap { _.disciplines }.toSet
-        itemFlags = flagsOf(items)
-        itemTypes = typesOf(items)
-        raceNames = races.keys.toSet
-        recipeFlags = flagsOf(recipes)
-        recipeTypes = typesOf(recipes)
-        skinFlags = flagsOf(skins)
-        skinTypes = typesOf(skins)
-        // weapons = select[Int, Weapon](items)
-
-        armorSkins = select[Int, ArmorSkin](skins)
-        weaponSkins = select[Int, WeaponSkin](skins)
-
-        armorTypes = detailTypesOf(armorSkins)
-        armorWeights = armorSkins.values.map { _.details.weight_class }.toSet
-        weaponTypes = detailTypesOf(weaponSkins)
+        update
     }
 
     def loadAchievementCategories =
-        home.resolve(ACHIEVEMENT_CATEGORIES) |> Loader.loadPersistentMap(AchievementCategories)
+        home.resolve(ACHIEVEMENT_CATEGORIES) |> Loader.loadMap(AchievementCategories)
 
     def loadAchievementGroups =
-        home.resolve(ACHIEVEMENT_GROUPS) |> Loader.loadPersistentMap(AchievementGroups)
+        home.resolve(ACHIEVEMENT_GROUPS) |> Loader.loadMap(AchievementGroups)
 
-    def loadAchievements(groups: Map[String, AchievementGroup], categories: Map[Int, AchievementCategory]) = {
-        // val currentAchievementIds = groups.values.flatMap { _.categories flatMap { categories(_).achievements } }.toSet
-        home.resolve(ACHIEVEMENTS) |> Loader.loadPersistentMap(Achievements) // |> presentIn(currentAchievementIds)
-    }
+    def loadAchievements =
+        home.resolve(ACHIEVEMENTS) |> Loader.loadMap(Achievements)
 
     def loadColors =
-        home.resolve(COLORS) |> Loader.loadPersistentMap(Colors) |> updateCollectionsFromData(dyeSets)
-
-    def loadItemStats =
-        home.resolve(ITEM_STATS) |> Loader.loadPersistentMap(ItemStats)
+        home.resolve(COLORS) |> Loader.loadMap(Colors)
 
     def loadItems =
-        home.resolve(ITEMS) |> Loader.loadPersistentMap(Items)
+        home.resolve(ITEMS) |> Loader.loadMap(Items)
+
+    def loadItemStats =
+        home.resolve(ITEM_STATS) |> Loader.loadMap(ItemStats)
 
     def loadMasteries =
-        home.resolve(MASTERIES) |> Loader.loadPersistentMap(Masteries)
+        home.resolve(MASTERIES) |> Loader.loadMap(Masteries)
 
     def loadMinis =
-        home.resolve(MINIS) |> Loader.loadPersistentMap(Minis) |> updateCollectionsFromAchievements("Minipet")
+        home.resolve(MINIS) |> Loader.loadMap(Minis)
 
     def loadNodes =
         home.resolve(NODES) |> Loader.loadPersistentSet(Nodes)
 
     def loadRaces =
-        home.resolve(RACES) |> Loader.loadPersistentMap(Races)
+        home.resolve(RACES) |> Loader.loadMap(Races)
 
     def loadRecipes =
-        home.resolve(RECIPES) |> Loader.loadPersistentMap(Recipes)
+        home.resolve(RECIPES) |> Loader.loadMap(Recipes)
 
     def loadSkins =
-        home.resolve(SKINS) |> Loader.loadPersistentMap(Skins) |> updateCollectionsFromAchievements("Skin")
+        home.resolve(SKINS) |> Loader.loadMap(Skins)
 
     def loadTitles =
-        home.resolve(TITLES) |> Loader.loadPersistentMap(Titles)
+        home.resolve(TITLES) |> Loader.loadMap(Titles)
 
     def longest(i: Traversable[_]) =
         i map { _.toString length } max
@@ -261,11 +228,6 @@ object Utils {
     def presentIn[K, V](s: Set[K])(m: Map[K, V]) =
         m filter { case (k, _) => s contains k }
 
-    def prices[T <: Priced[T]](t: T) = {
-        val ps = List(optPrice(t.buy, "B "), optPrice(t.sell, "S ")).flatten
-        if (ps isEmpty) "" else ps.mkString(", ", ", ", "")
-    }
-
     def price[T <: Id[Int] with Priced[T]](m: Map[Int, T], toItem: Map[T, Seq[Int]]) = {
         val ids = toItem.values.flatten.toSet filter { items.get(_).fold(false) { i => i.isUnpriced && isTradeable(i) } }
         if (ids nonEmpty) {
@@ -308,6 +270,11 @@ object Utils {
         price(m, toItem)
     }
 
+    def prices[T <: Priced[T]](t: T) = {
+        val ps = List(optPrice(t.buy, "B "), optPrice(t.sell, "S ")).flatten
+        if (ps isEmpty) "" else ps.mkString(", ", ", ", "")
+    }
+
     def priceSkins[K](m: Map[Int, Skin]) = {
         val toItem = unpriced(m) flatMap {
             case (_, s) => skinToItems.get(s.id) map { s -> _ }
@@ -338,24 +305,21 @@ object Utils {
             case _         => None
         }
 
-    def sellPrice[T <: Priced[T]](t: T) = {
-        // val p = optPrice(t.sell, "S ")
-        // if (p isEmpty) "" else ", " + p.get
+    def sellPrice[T <: Priced[T]](t: T) =
         optPrice(t.sell, "S ").fold("")(", " +)
-    }
 
     def splitAndBar(s: String) = s split ("(?=\\p{Upper})") map (_.toLowerCase) mkString "_"
+
+    def ticked[T <: Id[Int] with Named](s: Set[Int])(c: T): String = {
+        val state = if (s contains c.id) TICK else " "
+        s"$state  ${c.name}"
+    }
 
     def tickedAndPriced[T <: Id[Int] with Named with Priced[T]](s: Set[Int])(c: T): String =
         if (s contains c.id)
             s"$TICK  ${c.name}${sellPrice(c)}"
         else
             s"   ${c.name}${prices(c)}"
-
-    def ticked[T <: Id[Int] with Named](s: Set[Int])(c: T): String = {
-        val state = if (s contains c.id) TICK else " "
-        s"$state  ${c.name}"
-    }
 
     def toCollections[T <: Collected[T]](m: Map[_, T]) =
         (m |> collectable).values groupBy { _.collection.get }
@@ -380,14 +344,82 @@ object Utils {
     def unpriced[K, V <: Priced[V]](m: Map[K, V]) =
         m filter { case (_, v) => v.isUnpriced }
 
+    def update() = {
+        config.token foreach { t =>
+            accountAchievements = Loader.downloadAuthenticatedBlobs(AccountAchievements, t)
+            accountBuys = Loader.downloadAuthenticatedBlobs(AccountBuys, t)
+            accountDyes = Loader.downloadAuthenticatedIds(AccountDyes, t)
+            accountMinis = Loader.downloadAuthenticatedIds(AccountMinis, t)
+            accountNodes = Loader.downloadAuthenticatedIds(AccountNodes, t)
+            accountRecipes = Loader.downloadAuthenticatedIds(AccountRecipes, t)
+            accountSkins = Loader.downloadAuthenticatedIds(AccountSkins, t)
+            accountTitles = Loader.downloadAuthenticatedIds(AccountTitles, t)
+        }
+
+        updateAchievementCategories
+        updateAchievementGroups
+        updateAchievements
+        updateColors
+        updateItems
+        updateItemStats
+        updateMasteries
+        updateMinis
+        // updateNodes
+        updateRaces
+        updateRecipes
+        updateSkins
+        updateTitles
+
+        achievementFlags = flagsOf(achievements)
+        achievementTypes = typesOf(achievements)
+        // armor = select[Int, Armor](items)
+        collections = achievements |> itemSets
+        colorCategories = colors.values.flatMap { _.categories }.toSet
+        consumables = select[Int, Consumable](items)
+        disciplines = recipes.values.flatMap { _.disciplines }.toSet
+        itemFlags = flagsOf(items)
+        itemTypes = typesOf(items)
+        raceNames = races.keys.toSet
+        recipeFlags = flagsOf(recipes)
+        recipeTypes = typesOf(recipes)
+        skinFlags = flagsOf(skins)
+        skinTypes = typesOf(skins)
+        // weapons = select[Int, Weapon](items)
+
+        armorSkins = select[Int, ArmorSkin](skins)
+        weaponSkins = select[Int, WeaponSkin](skins)
+
+        armorTypes = detailTypesOf(armorSkins)
+        armorWeights = armorSkins.values.map { _.details.weight_class }.toSet
+        weaponTypes = detailTypesOf(weaponSkins)
+    }
+
+    def updateAchievementCategories = {
+        val (u, m) = home.resolve(ACHIEVEMENT_CATEGORIES) |> Loader.updateMap(AchievementCategories, achievementCategories)
+        newAchievementCategories = u
+        achievementCategories = m
+    }
+
+    def updateAchievementGroups = {
+        val (u, m) = home.resolve(ACHIEVEMENT_GROUPS) |> Loader.updateMap(AchievementGroups, achievementGroups)
+        newAchievementGroups = u
+        achievementGroups = m
+    }
+
+    def updateAchievements = {
+        val (u, m) = home.resolve(ACHIEVEMENTS) |> Loader.updateMap(Achievements, achievements)
+        newAchievements = u
+        achievements = m
+    }
+
     // XXX - dirty
     def updateCollectionsFromAchievements[V <: Collected[V]](progressType: String)(m: Map[Int, V]) =
         collectionOf(achievements, progressType).foldLeft(m) {
             case (m, (_, a)) =>
                 a.bits.fold(m) {
                     _.foldLeft(m) {
-                        case (m, MinipetProgress(_, Some(id))) => m.get(id).fold(m) { v => m + (id -> v.inCollection(a.name)) } // m + (id -> m(id).inCollection(a.name))
-                        case (m, SkinProgress(_, Some(id)))    => m.get(id).fold(m) { v => m + (id -> v.inCollection(a.name)) } // m + (id -> m(id).inCollection(a.name))
+                        case (m, MinipetProgress(_, Some(id))) => m.get(id).fold(m) { v => m + (id -> v.inCollection(a.name)) }
+                        case (m, SkinProgress(_, Some(id)))    => m.get(id).fold(m) { v => m + (id -> v.inCollection(a.name)) }
                         case _                                 => m
                     }
                 }
@@ -402,11 +434,65 @@ object Utils {
         }
     }
 
+    def updateColors = {
+        val (u, m) = home.resolve(COLORS) |> Loader.updateMap(Colors, colors)
+        newColors = u
+        colors = m |> updateCollectionsFromData(dyeSets)
+    }
+
+    def updateItems = {
+        val (u, m) = home.resolve(ITEMS) |> Loader.updateMap(Items, items)
+        newItems = u
+        items = m
+    }
+
+    def updateItemStats = {
+        val (u, m) = home.resolve(ITEM_STATS) |> Loader.updateMap(ItemStats, itemStats)
+        newItemStats = u
+        itemStats = m
+    }
+
+    def updateMasteries = {
+        val (u, m) = home.resolve(MASTERIES) |> Loader.updateMap(Masteries, masteries)
+        newMasteries = u
+        masteries = m
+    }
+
+    def updateMinis = {
+        val (u, m) = home.resolve(MINIS) |> Loader.updateMap(Minis, minis)
+        newMinis = u
+        minis = m |> updateCollectionsFromAchievements("Minipet")
+    }
+
     def updatePrice[T <: Priced[T]](p: Price)(t: T) =
         t.withPrices(Some(p.buys.fold(0)(_.unit_price)), Some(p.sells.fold(0)(_.unit_price)))
 
     def updatePrice[T <: Priced[T]](p: (Option[Int], Option[Int]))(t: T) =
         p match { case (b, s) => t.withPrices(b, s) }
+
+    def updateRaces = {
+        val (u, m) = home.resolve(RACES) |> Loader.updateMap(Races, races)
+        newRaces = u
+        races = m
+    }
+
+    def updateRecipes = {
+        val (u, m) = home.resolve(RECIPES) |> Loader.updateMap(Recipes, recipes)
+        newRecipes = u
+        recipes = m
+    }
+
+    def updateSkins = {
+        val (u, m) = home.resolve(SKINS) |> Loader.updateMap(Skins, skins)
+        newSkins = u
+        skins = m |> updateCollectionsFromAchievements("Skin")
+    }
+
+    def updateTitles = {
+        val (u, m) = home.resolve(TITLES) |> Loader.updateMap(Titles, titles)
+        newTitles = u
+        titles = m
+    }
 
     def using[A <: { def close(): Unit }, B](closeable: A)(f: A => B): B =
         try { f(closeable) } finally { closeable.close() }

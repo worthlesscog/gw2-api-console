@@ -49,7 +49,7 @@ package object gw2 {
         new TitlesCommand,
         new TokenCommand,
         new UnlockedCommand,
-        // new UpdateCommand,
+        new UpdateCommand,
         new WeaponsCommand)
 
     lazy val config = new Config(home)
@@ -66,19 +66,19 @@ package object gw2 {
     var accountSkins = Set.empty[Int]
     var accountTitles = Set.empty[Int]
 
-    var achievementCategories = Map.empty[Int, AchievementCategory]
-    var achievementGroups = Map.empty[String, AchievementGroup]
-    var achievements = Map.empty[Int, Achievement]
-    var colors = Map.empty[Int, Color]
-    var items = Map.empty[Int, Item]
-    var itemStats = Map.empty[Int, ItemStatSet]
-    var masteries = Map.empty[Int, Mastery]
-    var minis = Map.empty[Int, Mini]
+    var achievementCategories, newAchievementCategories = Map.empty[Int, AchievementCategory]
+    var achievementGroups, newAchievementGroups = Map.empty[String, AchievementGroup]
+    var achievements, newAchievements = Map.empty[Int, Achievement]
+    var colors, newColors = Map.empty[Int, Color]
+    var items, newItems = Map.empty[Int, Item]
+    var itemStats, newItemStats = Map.empty[Int, ItemStatSet]
+    var masteries, newMasteries = Map.empty[Int, Mastery]
+    var minis, newMinis = Map.empty[Int, Mini]
     var nodes = Set.empty[String]
-    var races = Map.empty[String, Race]
-    var recipes = Map.empty[Int, Recipe]
-    var skins = Map.empty[Int, Skin]
-    var titles = Map.empty[Int, Title]
+    var races, newRaces = Map.empty[String, Race]
+    var recipes, newRecipes = Map.empty[Int, Recipe]
+    var skins, newSkins = Map.empty[Int, Skin]
+    var titles, newTitles = Map.empty[Int, Title]
 
     var achievementFlags = Set.empty[String]
     var achievementTypes = Set.empty[String]

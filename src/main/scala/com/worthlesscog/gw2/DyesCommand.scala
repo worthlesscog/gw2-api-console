@@ -2,22 +2,18 @@ package com.worthlesscog.gw2
 
 import scala.language.postfixOps
 
-import Utils.{ asString, byName, categorized, cmpLeft, collectable, dump, dumpAndTally, dumpCollections, isNumeric, matchingName, priceByItem, ticked, tickedAndPriced, toCollections, toStringPrice }
+import Utils.{ absentFrom, asString, byBuyPrice, byName, categorized, cmpLeft, collectable, dump, dumpAndTally, dumpCollections, isNumeric, isPriced, matchingName, priceByItem, ticked, tickedAndPriced, toCollections, toStringPrice }
 
 class DyesCommand extends Command {
 
     val bindings = List("dyes")
     val harvestCategories = Set("Red", "Brown", "Blue", "Green", "Purple", "Gray", "Yellow", "Orange")
 
-    def byBuyPrice(a: (_, Color), b: (_, Color)) = Ordering[Option[Int]].lt(a._2.buy, b._2.buy)
-
     def execute(cmd: List[String]): Unit = cmd match {
         case "cheapest" :: Nil =>
-            val missing = colors filter { case (_, d) => !(accountDyes contains d.id) }
-            val withPrices = missing |> priceByItem
-            colors = colors ++ withPrices
-            val actuallyPriced = withPrices filter { case (_, s) => s.sell.nonEmpty && s.sell.get > 0 }
-            actuallyPriced |> dumpAndTally(byBuyPrice, withCollectionAndBuyPrice)
+            val updates = colors |> absentFrom(accountDyes) |> priceByItem
+            colors = colors ++ updates
+            updates |> isPriced |> dumpAndTally(byBuyPrice, withCollectionAndBuyPrice)
 
         case "collections" :: Nil =>
             colors |> collectable |> priceByItem |> toCollections |> dumpCollections(tickedAndPriced(accountDyes), Some(totals))
@@ -45,7 +41,7 @@ class DyesCommand extends Command {
         }
 
     def totals(m: Map[Int, Color]) = {
-        val t = m.filter { case (k, _) => !accountDyes.contains(k) }.foldLeft(0) { case (t, (_, s)) => s.buy.fold(t)(t +) }
+        val t = absentFrom(accountDyes)(m).foldLeft(0) { case (t, (_, s)) => s.buy.fold(t)(t +) }
         if (t > 0) Some(s"   ${toStringPrice(t)} to complete") else None
     }
 

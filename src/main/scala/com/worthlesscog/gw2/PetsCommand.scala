@@ -2,7 +2,7 @@ package com.worthlesscog.gw2
 
 import scala.language.postfixOps
 
-import Utils.{ asString, byName, cmpLeft, collectable, dump, dumpAndTally, dumpCollections, isNumeric, matchingName, priceByItem, prices, ticked, tickedAndPriced, toCollections }
+import Utils.{ absentFrom, asString, byBuyPrice, byName, cmpLeft, collectable, dump, dumpAndTally, dumpCollections, isNumeric, isPriced, matchingName, priceByItem, prices, ticked, tickedAndPriced, toCollections }
 
 class PetsCommand extends Command {
 
@@ -11,12 +11,16 @@ class PetsCommand extends Command {
     val bound = Set("AccoundBound", "SoulbindOnAcquire")
 
     def execute(cmd: List[String]): Unit = cmd match {
+        case "cheapest" :: Nil =>
+            val updates = minis |> absentFrom(accountMinis) |> priceByItem
+            minis = minis ++ updates
+            updates |> isPriced |> dumpAndTally(byBuyPrice, priced)
+
         case "collections" :: Nil =>
             minis |> collectable |> priceByItem |> toCollections |> dumpCollections(tickedAndPriced(accountMinis))
 
         case "missing" :: Nil =>
-            val missing = minis filterNot { case (_, m) => accountMinis contains m.id }
-            val updates = missing |> priceByItem
+            val updates = minis |> absentFrom(accountMinis) |> priceByItem
             minis = minis ++ updates
             updates |> dumpAndTally(byName, priced)
 
@@ -35,6 +39,6 @@ class PetsCommand extends Command {
     def priced(m: Mini): String =
         s"   ${m.name}${prices(m)}"
 
-    val uses = Some(Map("pets [#id | #contains | collections | missing]" -> "list minipets"))
+    val uses = Some(Map("pets [#id | #contains | cheapest | collections | missing]" -> "list minipets"))
 
 }

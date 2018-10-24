@@ -11,7 +11,7 @@ import spray.json.JsonParser
 
 object Loader {
 
-    val RETRIES = 10
+    val RETRIES = 3
 
     val user_agent = """Mozilla/5.0 (Windows NT 6.1; WOW64; rv:43.0) Gecko/20100101 Firefox/43.0"""
 
@@ -61,23 +61,31 @@ object Loader {
         i map { v => v.id -> v } toMap
     }
 
+    def downloadPersistentSet[V](c: PersistentSetCatalog[V])(p: Path) =
+        downloadSet(c) |> saveObject(p)
+
     def downloadSet[V](c: SetCatalog[V]): Set[V] = {
         s"  Downloading ${c.name}...\n" |> info
         c.url |> downloadIds(c)
     }
 
-    def downloadPersistentMap[K, V <: Id[K]](c: PersistentMapCatalog[K, V])(p: Path) =
-        downloadMap(c) |> saveObject(p)
+    def downloadUpdates[K, V <: Id[K]](c: MapCatalog[K, V], m: Map[K, V]): Map[K, V] = {
+        s"  Updating ${c.name}...\n" |> info
+        val l = c.url |> downloadIds(c)
+        val u = l -- m.keySet
+        if (u nonEmpty) {
+            val e = if (u.size > 10) "..." else ""
+            val trunc = u take 10 mkString ","
+            s"    New - $trunc$e\n" |> info
+            downloadMap(u, c)
+        } else Map.empty[K, V]
+    }
 
-    def downloadPersistentSet[V](c: PersistentSetCatalog[V])(p: Path) =
-        downloadSet(c) |> saveObject(p)
-
-    def loadPersistentMap[K, V <: Id[K]](c: PersistentMapCatalog[K, V])(p: Path) =
+    def loadMap[K, V <: Id[K]](c: PersistentMapCatalog[K, V])(p: Path) =
         if (Files.exists(p)) {
             s"  Loading ${c.name}...\n" |> info
             using(p |> ois) { c.read }
-        } else
-            downloadPersistentMap(c)(p)
+        } else Map.empty[K, V]
 
     def loadPersistentSet[V](c: PersistentSetCatalog[V])(p: Path) =
         if (Files.exists(p)) {
@@ -88,5 +96,10 @@ object Loader {
 
     def loadStream(s: InputStream): Array[Byte] =
         Stream.continually(s.read) takeWhile { -1 != } map { _.toByte } toArray
+
+    def updateMap[K, V <: Id[K]](c: PersistentMapCatalog[K, V], m: Map[K, V])(p: Path) = {
+        val u = downloadUpdates(c, m)
+        (u, (m ++ u) |> saveObject(p))
+    }
 
 }
