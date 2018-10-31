@@ -1,7 +1,5 @@
 package com.worthlesscog.gw2
 
-import scala.language.postfixOps
-
 import Utils.{ dumpAndTally, info, nameOrId, prices }
 
 class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](label) {

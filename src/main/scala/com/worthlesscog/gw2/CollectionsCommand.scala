@@ -1,6 +1,5 @@
 package com.worthlesscog.gw2
 
-import scala.language.postfixOps
 import scala.reflect.ClassTag
 
 import Utils.{ byName, dumpAndTally, isNumeric, priceItems, priceMinis, priceSkins, toMap }

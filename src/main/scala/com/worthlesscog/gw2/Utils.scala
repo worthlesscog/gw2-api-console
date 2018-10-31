@@ -4,7 +4,6 @@ import java.io.{ BufferedInputStream, FileInputStream, FileOutputStream, InputSt
 import java.nio.file.Path
 
 import scala.collection.immutable.SortedMap
-import scala.language.{ postfixOps, reflectiveCalls }
 import scala.reflect.ClassTag
 import scala.util.{ Failure, Success, Try }
 

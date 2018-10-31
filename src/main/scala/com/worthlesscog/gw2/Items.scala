@@ -1,7 +1,5 @@
 package com.worthlesscog.gw2
 
-import scala.language.postfixOps
-
 import Utils.{ noneOrCommas, noneOrSorted, noneOrString, toStringPrice }
 import spray.json.{ DefaultJsonProtocol, JsString, JsValue, RootJsonFormat, pimpAny }
 

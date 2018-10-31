@@ -1,7 +1,5 @@
 package com.worthlesscog.gw2
 
-import scala.language.postfixOps
-
 import Utils.{ absentFrom, asString, byBuyPrice, byName, cmpLeft, collectable, dump, dumpAndTally, dumpCollections, isNumeric, isPriced, matchingName, priceByItem, prices, ticked, tickedAndPriced, toCollections }
 
 class PetsCommand extends Command {

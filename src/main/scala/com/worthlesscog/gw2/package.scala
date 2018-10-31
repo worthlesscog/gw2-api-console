@@ -2,8 +2,6 @@ package com.worthlesscog
 
 import java.nio.file.Paths
 
-import scala.language.postfixOps
-
 import com.typesafe.scalalogging.Logger
 import com.worthlesscog.gw2.Utils.{ mapRecipeItems, mapSkinItems }
 

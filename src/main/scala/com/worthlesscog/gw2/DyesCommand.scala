@@ -1,7 +1,5 @@
 package com.worthlesscog.gw2
 
-import scala.language.postfixOps
-
 import Utils.{ absentFrom, asString, byBuyPrice, byName, categorized, cmpLeft, collectable, dump, dumpAndTally, dumpCollections, isNumeric, isPriced, matchingName, priceByItem, ticked, tickedAndPriced, toCollections, toStringPrice }
 
 class DyesCommand extends Command {

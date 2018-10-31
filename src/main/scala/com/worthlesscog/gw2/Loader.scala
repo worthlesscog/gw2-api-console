@@ -4,8 +4,6 @@ import java.io.InputStream
 import java.net.URL
 import java.nio.file.{ Files, Path }
 
-import scala.language.postfixOps
-
 import Utils.{ authenticatedUrl, bis, info, ois, retry, saveObject, using, utf8 }
 import spray.json.JsonParser
 

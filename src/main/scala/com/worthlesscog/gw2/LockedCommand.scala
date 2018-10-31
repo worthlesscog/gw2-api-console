@@ -1,7 +1,5 @@
 package com.worthlesscog.gw2
 
-import scala.language.postfixOps
-
 import Utils.absentFrom
 
 class LockedCommand extends LockedOrUnlocked {
