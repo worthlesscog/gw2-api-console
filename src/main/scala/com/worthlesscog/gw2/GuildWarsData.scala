@@ -16,6 +16,7 @@ object GuildWarsData {
         "Frost" -> Set("Deep Glacial Sky", "Deep Glacial Teal", "Glacial Sky", "Glacial Teal", "Shiver Sea", "Shiver Sky"),
         "Glint's Winter" -> Set("Glint's Ambition", "Glint's Crystal", "Glint's Isolation", "Glint's Purview", "Glint's Rebellion", "Glint's Sanctuary"),
         "Jormag" -> Set("Core Ice", "Eternal Ice", "Frostbite Blue", "Frostbite Green", "Frozen Scales", "Permafrost"),
+        "Kralkatorrik" -> Set("Arcane", "Branded", "Brandstorm", "Crystal", "Fear", "Shattered"),
         "Lion's Arch Commemorative" -> Set("Enameled Anamnesis", "Enameled Generation", "Enameled Longevity", "Enameled Perseverance", "Enameled Sacrifice", "Enameled Solitude"),
         "Lion's Arch Rebuild" -> Set("Enameled Amenity", "Enameled Banana", "Enameled Brass", "Enameled Morning Glory", "Enameled Onset", "Enameled Strawberry"),
         "Lion's Arch Survivors" -> Set("Enameled Crimson", "Enameled Emblaze", "Enameled Jungle", "Enameled Legacy", "Enameled Reign", "Enameled Sky"),
