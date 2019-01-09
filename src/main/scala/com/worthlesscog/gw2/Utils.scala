@@ -63,7 +63,9 @@ object Utils {
 
     def dumpAndTally[K, V](s: ((K, V), (K, V)) => Boolean, f: V => String, limit: Int = 0)(m: Map[K, V]) = {
         m |> dump(s, f, None, limit)
-        f"${if (limit > 0) m.size.min(limit) else m.size}%d row(s)\n" |> info
+        val n = if (limit > 0) m.size.min(limit) else m.size
+        if (n > 0)
+            f"$n row(s)\n" |> info
     }
 
     def dumpCollections[V <: Collected[V] with Id[Int] with Named](f: V => String, t: Option[Map[Int, V] => Option[String]] = None)(m: Map[String, Iterable[V]]) = {
@@ -322,6 +324,13 @@ object Utils {
 
     def toCollections[T <: Collected[T]](m: Map[_, T]) =
         (m |> collectable).values groupBy { _.collection.get }
+
+    def toItems(m: Map[_, Recipe]) =
+        m map {
+            case (k, r) =>
+                val o = r.output_item_id
+                k -> items.get(o).fold(s"Item #$o Missing")(i => s"${i.name}${r.sell.fold("") { ", " + toStringPrice(_) }}")
+        }
 
     def toMap[T <: Id[Int]](ts: Iterable[T]) =
         ts map { t => t.id -> t } toMap

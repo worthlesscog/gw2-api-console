@@ -40,6 +40,7 @@ package object gw2 {
         new ItemsCommand,
         new LockedCommand,
         new MasteriesCommand,
+        new NewCommand,
         new NodesCommand,
         new PetsCommand,
         new RecipesCommand,

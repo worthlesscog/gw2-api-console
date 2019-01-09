@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import Utils.{ absentFrom, asString, cmpLeft, cmpRight, dump, dumpAndTally, info, isNumeric, nameOrId, newLine, ofType, presentIn, priceRecipes, toStringPrice }
+import Utils.{ absentFrom, asString, cmpLeft, cmpRight, dump, dumpAndTally, info, isNumeric, nameOrId, newLine, ofType, presentIn, priceRecipes, toItems }
 
 class RecipesCommand extends Command {
 
@@ -107,13 +107,6 @@ class RecipesCommand extends Command {
 
     def matching[K](c: String)(m: Map[K, Recipe]) =
         m filter { case (_, r) => items.get(r.output_item_id).fold(false) { _.name.contains(c) } }
-
-    def toItems(m: Map[_, Recipe]) =
-        m map {
-            case (k, r) =>
-                val o = r.output_item_id
-                k -> items.get(o).fold(s"Item #$o Missing")(i => s"${i.name}${r.sell.fold("") { ", " + toStringPrice(_) }}")
-        }
 
     def unlockable(m: Map[_, Recipe]) =
         m filter { case (_, r) => r.flags contains "LearnedFromItem" }
