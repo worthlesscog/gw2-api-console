@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import Utils.{ asString, byName, cmpLeft, dump, dumpAndTally, flagged, isNumeric, matchingName, ofType }
+import Utils.{asString, byName, cmpLeft, dump, dumpAndTally, flagged, isNumeric, matchingName, ofType}
 
 abstract class FlagNameTypeMap[T <: FlagNameTypeAndMap](label: String) extends Command {
 

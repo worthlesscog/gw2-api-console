@@ -1,12 +1,10 @@
 package com.worthlesscog.gw2
 
-import Utils.{ absentFrom, asString, byBuyPrice, byName, cmpLeft, collectable, dump, dumpAndTally, dumpCollections, isNumeric, isPriced, matchingName, priceByItem, prices, ticked, tickedAndPriced, toCollections }
+import Utils._
 
 class PetsCommand extends Command {
 
     val bindings = List("pets")
-
-    val bound = Set("AccoundBound", "SoulbindOnAcquire")
 
     def execute(cmd: List[String]): Unit = cmd match {
         case "cheapest" :: Nil =>
@@ -35,7 +33,7 @@ class PetsCommand extends Command {
     }
 
     def priced(m: Mini): String =
-        s"   ${m.name}${prices(m)}"
+        s"   ${ m.name }${ prices(m) }"
 
     val uses = Some(Map("pets [#id | #contains | cheapest | collections | missing]" -> "list minipets"))
 

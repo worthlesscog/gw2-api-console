@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import Utils.{ asString, byName, cmpLeft, dump, dumpAndTally, isNumeric, matchingName, ticked }
+import Utils.{asString, byName, cmpLeft, dump, dumpAndTally, isNumeric, matchingName, ticked}
 
 class TitlesCommand extends Command {
 

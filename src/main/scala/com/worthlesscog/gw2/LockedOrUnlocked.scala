@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import Utils.{ asString, byName, dumpAndTally, ofDetailType, ofWeight }
+import Utils.{asString, byName, dumpAndTally, ofDetailType, ofWeight}
 
 abstract class LockedOrUnlocked extends Command {
 

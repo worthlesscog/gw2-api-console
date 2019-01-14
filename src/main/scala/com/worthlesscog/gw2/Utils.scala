@@ -1,13 +1,13 @@
 package com.worthlesscog.gw2
 
-import java.io.{ BufferedInputStream, FileInputStream, FileOutputStream, InputStream, ObjectInputStream, ObjectOutputStream }
+import java.io.{BufferedInputStream, FileInputStream, FileOutputStream, InputStream, ObjectInputStream, ObjectOutputStream}
 import java.nio.file.Path
+
+import GuildWarsData.dyeSets
 
 import scala.collection.immutable.SortedMap
 import scala.reflect.ClassTag
-import scala.util.{ Failure, Success, Try }
-
-import GuildWarsData.dyeSets
+import scala.util.{Failure, Success, Try}
 
 object Utils {
 
@@ -57,7 +57,7 @@ object Utils {
                     fmt.format(k, f(v)) |> info
             }
             t foreach {
-                _(m) foreach { fmt.format("", _) |> info }
+                _ (m) foreach { fmt.format("", _) |> info }
             }
         }
 
@@ -309,18 +309,18 @@ object Utils {
     def sellPrice[T <: Priced[T]](t: T) =
         optPrice(t.sell, "S ").fold("")(", " +)
 
-    def splitAndBar(s: String) = s split ("(?=\\p{Upper})") map (_.toLowerCase) mkString "_"
+    def splitAndBar(s: String) = s split "(?=\\p{Upper})" map (_.toLowerCase) mkString "_"
 
     def ticked[T <: Id[Int] with Named](s: Set[Int])(c: T): String = {
         val state = if (s contains c.id) TICK else " "
-        s"$state  ${c.name}"
+        s"$state  ${ c.name }"
     }
 
     def tickedAndPriced[T <: Id[Int] with Named with Priced[T]](s: Set[Int])(c: T): String =
         if (s contains c.id)
-            s"$TICK  ${c.name}${sellPrice(c)}"
+            s"$TICK  ${ c.name }${ sellPrice(c) }"
         else
-            s"   ${c.name}${prices(c)}"
+            s"   ${ c.name }${ prices(c) }"
 
     def toCollections[T <: Collected[T]](m: Map[_, T]) =
         (m |> collectable).values groupBy { _.collection.get }
@@ -329,7 +329,7 @@ object Utils {
         m map {
             case (k, r) =>
                 val o = r.output_item_id
-                k -> items.get(o).fold(s"Item #$o Missing")(i => s"${i.name}${r.sell.fold("") { ", " + toStringPrice(_) }}")
+                k -> items.get(o).fold(s"Item #$o Missing")(i => s"${ i.name }${ r.sell.fold("") { ", " + toStringPrice(_) } }")
         }
 
     def toMap[T <: Id[Int]](ts: Iterable[T]) =
@@ -502,7 +502,7 @@ object Utils {
         titles = m
     }
 
-    def using[A <: { def close(): Unit }, B](closeable: A)(f: A => B): B =
+    def using[A <: {def close() : Unit}, B](closeable: A)(f: A => B): B =
         try { f(closeable) } finally { closeable.close() }
 
     def utf8(b: Array[Byte]) = new String(b, "UTF-8")

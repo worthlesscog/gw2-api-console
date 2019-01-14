@@ -1,15 +1,15 @@
 package com.worthlesscog.gw2
 
-import spray.json.{ DefaultJsonProtocol, JsValue }
+import spray.json.{DefaultJsonProtocol, JsValue}
 
 case class Mastery(
-        id: Int,
-        name: String,
-        requirement: String,
-        order: Int,
-        background: String,
-        region: String,
-        levels: List[MasteryLevel]) extends Id[Int] with Named {
+    id: Int,
+    name: String,
+    requirement: String,
+    order: Int,
+    background: String,
+    region: String,
+    levels: List[MasteryLevel]) extends Id[Int] with Named {
 
     override def toString = name
 
@@ -25,7 +25,7 @@ case class MasteryLevel(
 
 object MasteryProtocols extends DefaultJsonProtocol {
 
-    implicit val fmtMastertLevel = jsonFormat6(MasteryLevel)
+    implicit val fmtMasteryLevel = jsonFormat6(MasteryLevel)
     implicit val fmtMastery = jsonFormat7(Mastery)
 
 }

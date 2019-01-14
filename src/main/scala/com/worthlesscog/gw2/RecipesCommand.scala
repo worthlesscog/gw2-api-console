@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import Utils.{ absentFrom, asString, cmpLeft, cmpRight, dump, dumpAndTally, info, isNumeric, nameOrId, newLine, ofType, presentIn, priceRecipes, toItems }
+import Utils._
 
 class RecipesCommand extends Command {
 

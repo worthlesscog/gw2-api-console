@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import Utils.{ asString, byName, cmpRight, dump, dumpAndTally, info, isNumeric }
+import Utils.{asString, byName, cmpRight, dump, dumpAndTally, info, isNumeric}
 
 class ItemStatsCommand extends Command {
 

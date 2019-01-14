@@ -1,21 +1,21 @@
 package com.worthlesscog.gw2
 
-import spray.json.{ DefaultJsonProtocol, JsString, JsValue, RootJsonFormat, pimpAny }
+import spray.json.{pimpAny, DefaultJsonProtocol, JsString, JsValue, RootJsonFormat}
 
 case class Achievement(
-        id: Int,
-        icon: Option[String],
-        name: String,
-        description: String,
-        requirement: String,
-        locked_text: String,
-        `type`: String,
-        flags: Set[String],
-        tiers: List[AchievementTier],
-        prerequisites: Option[List[Int]],
-        rewards: Option[List[AchievementReward]],
-        bits: Option[List[AchievementProgress]],
-        point_cap: Option[Int]) extends FlagNameTypeAndMap with Id[Int] {
+    id: Int,
+    icon: Option[String],
+    name: String,
+    description: String,
+    requirement: String,
+    locked_text: String,
+    `type`: String,
+    flags: Set[String],
+    tiers: List[AchievementTier],
+    prerequisites: Option[List[Int]],
+    rewards: Option[List[AchievementReward]],
+    bits: Option[List[AchievementProgress]],
+    point_cap: Option[Int]) extends FlagNameTypeAndMap with Id[Int] {
 
     def isMeta = flags contains "CategoryDisplay"
 

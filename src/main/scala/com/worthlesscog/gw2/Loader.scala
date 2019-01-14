@@ -2,9 +2,9 @@ package com.worthlesscog.gw2
 
 import java.io.InputStream
 import java.net.URL
-import java.nio.file.{ Files, Path }
+import java.nio.file.{Files, Path}
 
-import Utils.{ authenticatedUrl, bis, info, ois, retry, saveObject, using, utf8 }
+import Utils.{authenticatedUrl, bis, info, ois, retry, saveObject, using, utf8}
 import spray.json.JsonParser
 
 object Loader {
@@ -23,13 +23,13 @@ object Loader {
         }
 
     def downloadAuthenticatedBlobs[K, V <: Id[K]](c: BlobCatalog[V], token: String) = {
-        s"  Downloading ${c.name}...\n" |> info
+        s"  Downloading ${ c.name }...\n" |> info
         val l = authenticatedUrl(c.url, token) |> downloadJson map c.bulkConvert
         l.fold(Map.empty[K, V]) { _.map { v => v.id -> v } toMap }
     }
 
     def downloadAuthenticatedIds[K](c: IdCatalog[K], token: String) = {
-        s"  Downloading ${c.name}...\n" |> info
+        s"  Downloading ${ c.name }...\n" |> info
         authenticatedUrl(c.url, token) |> downloadIds(c)
     }
 
@@ -40,14 +40,14 @@ object Loader {
         retry(RETRIES)(download(url)) match {
             case Right(b) =>
                 utf8(b) |> Some.apply map { JsonParser(_) }
-            case Left(t) =>
+            case Left(t)  =>
                 t.getLocalizedMessage + "\n" |> info
                 None
         }
 
     def downloadMap[K, V <: Id[K]](c: MapCatalog[K, V]): Map[K, V] = {
         val l = c.url |> downloadIds(c)
-        s"  Downloading ${l.size} ${c.name}...\n" |> info
+        s"  Downloading ${ l.size } ${ c.name }...\n" |> info
         downloadMap(l, c)
     }
 
@@ -63,12 +63,12 @@ object Loader {
         downloadSet(c) |> saveObject(p)
 
     def downloadSet[V](c: SetCatalog[V]): Set[V] = {
-        s"  Downloading ${c.name}...\n" |> info
+        s"  Downloading ${ c.name }...\n" |> info
         c.url |> downloadIds(c)
     }
 
     def downloadUpdates[K, V <: Id[K]](c: MapCatalog[K, V], m: Map[K, V]): Map[K, V] = {
-        s"  Updating ${c.name}...\n" |> info
+        s"  Updating ${ c.name }...\n" |> info
         val l = c.url |> downloadIds(c)
         val u = l -- m.keySet
         if (u nonEmpty) {
@@ -81,13 +81,13 @@ object Loader {
 
     def loadMap[K, V <: Id[K]](c: PersistentMapCatalog[K, V])(p: Path) =
         if (Files.exists(p)) {
-            s"  Loading ${c.name}...\n" |> info
+            s"  Loading ${ c.name }...\n" |> info
             using(p |> ois) { c.read }
         } else Map.empty[K, V]
 
     def loadPersistentSet[V](c: PersistentSetCatalog[V])(p: Path) =
         if (Files.exists(p)) {
-            s"  Loading ${c.name}...\n" |> info
+            s"  Loading ${ c.name }...\n" |> info
             using(p |> ois) { c.read }
         } else
             downloadPersistentSet(c)(p)

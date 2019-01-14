@@ -1,11 +1,11 @@
 package com.worthlesscog.gw2
 
-import spray.json.{ DefaultJsonProtocol, JsValue }
+import spray.json.{DefaultJsonProtocol, JsValue}
 
 case class Race(
-        id: String,
-        name: String,
-        skills: Set[Int]) extends Id[String] with Named {
+    id: String,
+    name: String,
+    skills: Set[Int]) extends Id[String] with Named {
 
     override def toString = id
 

@@ -1,7 +1,6 @@
 package com.worthlesscog.gw2
 
-import spray.json.{ DefaultJsonProtocol, JsValue }
-import java.util.Date
+import spray.json.{DefaultJsonProtocol, JsValue}
 
 case class AccountBuy(
     id: Int,

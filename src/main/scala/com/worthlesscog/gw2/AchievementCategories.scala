@@ -1,17 +1,16 @@
 package com.worthlesscog.gw2
 
-import spray.json.{ DefaultJsonProtocol, JsValue }
+import spray.json.{DefaultJsonProtocol, JsValue}
 
 case class AchievementCategory(
-        id: Int,
-        name: String,
-        description: String,
-        order: Int,
-        icon: String,
-        achievements: List[Int]) extends Id[Int] with Named {
+    id: Int,
+    name: String,
+    description: String,
+    order: Int,
+    icon: String,
+    achievements: List[Int]) extends Id[Int] with Named {
 
     override def toString = name
-
 }
 
 object AchievementCategoryProtocols extends DefaultJsonProtocol {

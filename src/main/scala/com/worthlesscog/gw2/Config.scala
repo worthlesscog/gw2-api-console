@@ -1,8 +1,8 @@
 package com.worthlesscog.gw2
 
-import java.nio.file.{ Files, Path }
+import java.nio.file.{Files, Path}
 
-import Utils.{ noneOrString, ois, saveObject, using }
+import Utils.{noneOrString, ois, saveObject, using}
 
 case class SavedConfig(var token: Option[String])
 

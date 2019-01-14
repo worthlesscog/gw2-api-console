@@ -1,18 +1,18 @@
 package com.worthlesscog.gw2
 
 import Utils.noneOrString
-import spray.json.{ DefaultJsonProtocol, JsValue }
+import spray.json.{DefaultJsonProtocol, JsValue}
 
 case class Mini(
-        id: Int,
-        name: String,
-        unlock: Option[String],
-        icon: String,
-        order: Int,
-        item_id: Int,
-        collection: Option[String],
-        buy: Option[Int],
-        sell: Option[Int]) extends Collected[Mini] with Id[Int] with Itemized with Mappable with Named with Priced[Mini] {
+    id: Int,
+    name: String,
+    unlock: Option[String],
+    icon: String,
+    order: Int,
+    item_id: Int,
+    collection: Option[String],
+    buy: Option[Int],
+    sell: Option[Int]) extends Collected[Mini] with Id[Int] with Itemized with Mappable with Named with Priced[Mini] {
 
     def inCollection(s: String) = copy(collection = Some(s))
 

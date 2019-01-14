@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import Utils.{ absentFrom, asString, byBuyPrice, byName, categorized, cmpLeft, collectable, dump, dumpAndTally, dumpCollections, isNumeric, isPriced, matchingName, priceByItem, ticked, tickedAndPriced, toCollections, toStringPrice }
+import Utils._
 
 class DyesCommand extends Command {
 
@@ -35,17 +35,17 @@ class DyesCommand extends Command {
 
     def harvestable[K](m: Map[K, Color]) =
         m filter {
-            case (_, c) => !(accountDyes contains c.id) && (c.collection isEmpty) && !(c.categories isEmpty)
+            case (_, c) => !(accountDyes contains c.id) && (c.collection isEmpty) && c.categories.nonEmpty
         }
 
     def totals(m: Map[Int, Color]) = {
         val t = absentFrom(accountDyes)(m).foldLeft(0) { case (t, (_, s)) => s.buy.fold(t)(t +) }
-        if (t > 0) Some(s"   ${toStringPrice(t)} to complete") else None
+        if (t > 0) Some(s"   ${ toStringPrice(t) } to complete") else None
     }
 
-    def withCategoriesAndSellPrice(c: Color) = s"${c.name}, ${c.sell.fold("-") { toStringPrice }} (${harvestCategories.intersect(c.categories).mkString(",")})"
+    def withCategoriesAndSellPrice(c: Color) = s"${ c.name }, ${ c.sell.fold("-") { toStringPrice } } (${ harvestCategories.intersect(c.categories).mkString(",") })"
 
-    def withCollectionAndBuyPrice(c: Color) = s"${c.name}, ${c.buy.fold("-") { toStringPrice }}${c.collection.fold("")(s => " (" + s + ")")}"
+    def withCollectionAndBuyPrice(c: Color) = s"${ c.name }, ${ c.buy.fold("-") { toStringPrice } }${ c.collection.fold("")(s => " (" + s + ")") }"
 
     val uses = Some(Map("dyes [#id | #category | #contains | cheapest | collections | harvest]" -> "list dyes"))
 

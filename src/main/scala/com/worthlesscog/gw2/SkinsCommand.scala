@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import Utils.{ absentFrom, asString, byBuyPrice, byName, collectable, dumpAndTally, dumpCollections, flagged, isPriced, notFlagged, priceSkins, prices, tickedAndPriced, toCollections, toStringPrice }
+import Utils._
 
 class SkinsCommand extends FlagNameTypeMap[Skin]("skins") {
 
@@ -33,7 +33,7 @@ class SkinsCommand extends FlagNameTypeMap[Skin]("skins") {
             ">"
         else
             "="
-        s"$state  ${s.name}${prices(s)}"
+        s"$state  ${ s.name }${ prices(s) }"
     }
 
     def totals(m: Map[Int, Skin]) = {

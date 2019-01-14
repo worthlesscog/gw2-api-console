@@ -1,7 +1,7 @@
 package com.worthlesscog.gw2
 
-import Utils.{ noneOrSorted, noneOrString, noneOrStrings, splitAndBar }
-import spray.json.{ DefaultJsonProtocol, JsString, JsValue, NullOptions, RootJsonFormat, pimpAny }
+import Utils.{noneOrSorted, noneOrString, noneOrStrings, splitAndBar}
+import spray.json.{pimpAny, DefaultJsonProtocol, JsString, JsValue, NullOptions, RootJsonFormat}
 
 trait Skin extends FlagNameTypeAndMap with Collected[Skin] with Id[Int] with Priced[Skin] {
     def id: Int
@@ -35,18 +35,18 @@ trait Skin extends FlagNameTypeAndMap with Collected[Skin] with Id[Int] with Pri
 }
 
 case class ArmorSkin(
-        id: Int,
-        name: String,
-        `type`: String,
-        flags: Set[String],
-        restrictions: Set[String],
-        icon: Option[String],
-        rarity: String,
-        description: Option[String],
-        details: ArmorSkinDetails,
-        collection: Option[String],
-        buy: Option[Int],
-        sell: Option[Int]) extends Detailed with Skin {
+    id: Int,
+    name: String,
+    `type`: String,
+    flags: Set[String],
+    restrictions: Set[String],
+    icon: Option[String],
+    rarity: String,
+    description: Option[String],
+    details: ArmorSkinDetails,
+    collection: Option[String],
+    buy: Option[Int],
+    sell: Option[Int]) extends Detailed with Skin {
 
     // XXX - :/
     def inCollection(s: String) = copy(collection = Some(s))
@@ -59,9 +59,9 @@ case class ArmorSkin(
 }
 
 case class ArmorSkinDetails(
-        `type`: String,
-        weight_class: String,
-        dye_slots: Option[DyeSlots]) extends Details with Mappable {
+    `type`: String,
+    weight_class: String,
+    dye_slots: Option[DyeSlots]) extends Details with Mappable {
 
     def ds = dye_slots.fold(Map("dye_slots" -> "None"))(_.toMap)
 
@@ -72,8 +72,8 @@ case class ArmorSkinDetails(
 }
 
 case class DyeSlots(
-        `default`: List[Option[ColorMaterial]],
-        overrides: Map[String, List[Option[ColorMaterial]]]) extends Mappable {
+    `default`: List[Option[ColorMaterial]],
+    overrides: Map[String, List[Option[ColorMaterial]]]) extends Mappable {
 
     def orides = overrides map { case (k, v) => ("dye_slot_override_" + splitAndBar(k)) -> noneOrStrings(v) }
 
@@ -83,25 +83,25 @@ case class DyeSlots(
 }
 
 case class ColorMaterial(
-        color_id: Int,
-        material: String) {
+    color_id: Int,
+    material: String) {
 
     override def toString = s"color_id $color_id / material $material"
 
 }
 
 case class BackSkin(
-        id: Int,
-        name: String,
-        `type`: String,
-        flags: Set[String],
-        restrictions: Set[String],
-        icon: Option[String],
-        rarity: String,
-        description: Option[String],
-        collection: Option[String],
-        buy: Option[Int],
-        sell: Option[Int]) extends Skin {
+    id: Int,
+    name: String,
+    `type`: String,
+    flags: Set[String],
+    restrictions: Set[String],
+    icon: Option[String],
+    rarity: String,
+    description: Option[String],
+    collection: Option[String],
+    buy: Option[Int],
+    sell: Option[Int]) extends Skin {
 
     // XXX - :/
     def inCollection(s: String) = copy(collection = Some(s))
@@ -112,18 +112,18 @@ case class BackSkin(
 }
 
 case class GatheringToolSkin(
-        id: Int,
-        name: String,
-        `type`: String,
-        flags: Set[String],
-        restrictions: Set[String],
-        icon: Option[String],
-        rarity: String,
-        description: Option[String],
-        collection: Option[String],
-        details: GatheringToolSkinDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Detailed with Skin {
+    id: Int,
+    name: String,
+    `type`: String,
+    flags: Set[String],
+    restrictions: Set[String],
+    icon: Option[String],
+    rarity: String,
+    description: Option[String],
+    collection: Option[String],
+    details: GatheringToolSkinDetails,
+    buy: Option[Int],
+    sell: Option[Int]) extends Detailed with Skin {
 
     // XXX - :/
     def inCollection(s: String) = copy(collection = Some(s))
@@ -137,18 +137,18 @@ case class GatheringToolSkinDetails(
     `type`: String) extends Details
 
 case class WeaponSkin(
-        id: Int,
-        name: String,
-        `type`: String,
-        flags: Set[String],
-        restrictions: Set[String],
-        icon: Option[String],
-        rarity: String,
-        description: Option[String],
-        collection: Option[String],
-        details: WeaponSkinDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Detailed with Skin {
+    id: Int,
+    name: String,
+    `type`: String,
+    flags: Set[String],
+    restrictions: Set[String],
+    icon: Option[String],
+    rarity: String,
+    description: Option[String],
+    collection: Option[String],
+    details: WeaponSkinDetails,
+    buy: Option[Int],
+    sell: Option[Int]) extends Detailed with Skin {
 
     // XXX - :/
     def inCollection(s: String) = copy(collection = Some(s))

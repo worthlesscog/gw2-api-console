@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import spray.json.{ DefaultJsonProtocol, JsValue }
+import spray.json.{DefaultJsonProtocol, JsValue}
 
 case class Price(
     id: Int,

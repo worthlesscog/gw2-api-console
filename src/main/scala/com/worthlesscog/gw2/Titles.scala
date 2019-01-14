@@ -1,14 +1,14 @@
 package com.worthlesscog.gw2
 
-import Utils.{ noneOrCommas, noneOrString }
-import spray.json.{ DefaultJsonProtocol, JsValue }
+import Utils.{noneOrCommas, noneOrString}
+import spray.json.{DefaultJsonProtocol, JsValue}
 
 case class Title(
-        id: Int,
-        name: String,
-        achievement: Option[Int],
-        achievements: Option[List[Int]],
-        ap_required: Option[Int]) extends Id[Int] with Mappable with Named {
+    id: Int,
+    name: String,
+    achievement: Option[Int],
+    achievements: Option[List[Int]],
+    ap_required: Option[Int]) extends Id[Int] with Mappable with Named {
 
     def toMap = Map(
         "id" -> id.toString,

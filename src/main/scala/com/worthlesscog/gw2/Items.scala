@@ -1,7 +1,7 @@
 package com.worthlesscog.gw2
 
-import Utils.{ noneOrCommas, noneOrSorted, noneOrString, toStringPrice }
-import spray.json.{ DefaultJsonProtocol, JsString, JsValue, RootJsonFormat, pimpAny }
+import Utils.{noneOrCommas, noneOrSorted, noneOrString, toStringPrice}
+import spray.json.{pimpAny, DefaultJsonProtocol, JsString, JsValue, RootJsonFormat}
 
 // XXX - needs specific unmarshall
 
@@ -47,22 +47,22 @@ trait Item extends FlagNameTypeAndMap with Id[Int] with Priced[Item] {
 }
 
 case class Armor(
-        id: Int,
-        chat_link: String,
-        name: String,
-        icon: Option[String],
-        description: Option[String],
-        `type`: String,
-        rarity: String,
-        level: Int,
-        vendor_value: Int,
-        default_skin: Option[Int],
-        flags: Set[String],
-        game_types: Set[String],
-        restrictions: Set[String],
-        details: ArmorDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Item with Detailed {
+    id: Int,
+    chat_link: String,
+    name: String,
+    icon: Option[String],
+    description: Option[String],
+    `type`: String,
+    rarity: String,
+    level: Int,
+    vendor_value: Int,
+    default_skin: Option[Int],
+    flags: Set[String],
+    game_types: Set[String],
+    restrictions: Set[String],
+    details: ArmorDetails,
+    buy: Option[Int],
+    sell: Option[Int]) extends Item with Detailed {
 
     override def t = details.`type`
     def w = details.weight_class
@@ -77,14 +77,14 @@ case class Armor(
 }
 
 case class ArmorDetails(
-        `type`: String,
-        weight_class: String,
-        defense: Int,
-        infusion_slots: List[InfusionSlot],
-        infix_upgrade: Option[InfixUpgrade],
-        suffix_item_id: Option[Int],
-        secondary_suffix_item_id: String,
-        stat_choices: Option[List[Int]]) extends Details with Mappable {
+    `type`: String,
+    weight_class: String,
+    defense: Int,
+    infusion_slots: List[InfusionSlot],
+    infix_upgrade: Option[InfixUpgrade],
+    suffix_item_id: Option[Int],
+    secondary_suffix_item_id: String,
+    stat_choices: Option[List[Int]]) extends Details with Mappable {
 
     def is = infusion_slots map { _.toString } mkString ", "
     def iu = noneOrString(infix_upgrade)
@@ -102,57 +102,57 @@ case class ArmorDetails(
 }
 
 case class InfusionSlot(
-        flags: List[String],
-        item_id: Option[Int]) {
+    flags: List[String],
+    item_id: Option[Int]) {
 
     override def toString = flags.mkString(", ") + item_id.fold("") { " " + }
 
 }
 
 case class InfixUpgrade(
-        attributes: List[AttributeModifier],
-        buff: Option[Buff],
-        id: Int) {
+    attributes: List[AttributeModifier],
+    buff: Option[Buff],
+    id: Int) {
 
-    def al = attributes map { _.toString } mkString (", ", ", ", "")
+    def al = attributes map { _.toString } mkString(", ", ", ", "")
 
     override def toString = id + al + buff.fold("") { ", " + }
 
 }
 
 case class AttributeModifier(
-        attribute: String,
-        modifier: Int) {
+    attribute: String,
+    modifier: Int) {
 
     override def toString = attribute + " " + modifier
 
 }
 
 case class Buff(
-        skill_id: Int,
-        description: Option[String]) {
+    skill_id: Int,
+    description: Option[String]) {
 
     override def toString = description.fold(skill_id.toString) { skill_id + " " + }
 
 }
 
 case class Back(
-        id: Int,
-        chat_link: String,
-        name: String,
-        icon: Option[String],
-        description: Option[String],
-        `type`: String,
-        rarity: String,
-        level: Int,
-        vendor_value: Int,
-        default_skin: Option[Int],
-        flags: Set[String],
-        game_types: Set[String],
-        restrictions: Set[String],
-        details: BackDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Item {
+    id: Int,
+    chat_link: String,
+    name: String,
+    icon: Option[String],
+    description: Option[String],
+    `type`: String,
+    rarity: String,
+    level: Int,
+    vendor_value: Int,
+    default_skin: Option[Int],
+    flags: Set[String],
+    game_types: Set[String],
+    restrictions: Set[String],
+    details: BackDetails,
+    buy: Option[Int],
+    sell: Option[Int]) extends Item {
 
     def withPrices(b: Option[Int], s: Option[Int]) =
         copy(buy = b, sell = s)
@@ -167,24 +167,24 @@ case class BackDetails(
     stat_choices: Option[List[Int]])
 
 case class Bag(
-        id: Int,
-        chat_link: String,
-        name: String,
-        icon: Option[String],
-        description: Option[String],
-        `type`: String,
-        rarity: String,
-        level: Int,
-        vendor_value: Int,
-        default_skin: Option[Int],
-        flags: Set[String],
-        game_types: Set[String],
-        restrictions: Set[String],
-        details: BagDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Item {
+    id: Int,
+    chat_link: String,
+    name: String,
+    icon: Option[String],
+    description: Option[String],
+    `type`: String,
+    rarity: String,
+    level: Int,
+    vendor_value: Int,
+    default_skin: Option[Int],
+    flags: Set[String],
+    game_types: Set[String],
+    restrictions: Set[String],
+    details: BagDetails,
+    buy: Option[Int],
+    sell: Option[Int]) extends Item {
 
-    override def toString = s"$name, $rarity $l${details.size} slot $t"
+    override def toString = s"$name, $rarity $l${ details.size } slot $t"
 
     def withPrices(b: Option[Int], s: Option[Int]) =
         copy(buy = b, sell = s)
@@ -196,22 +196,22 @@ case class BagDetails(
     no_sell_or_sort: Boolean)
 
 case class Consumable(
-        id: Int,
-        chat_link: String,
-        name: String,
-        icon: Option[String],
-        description: Option[String],
-        `type`: String,
-        rarity: String,
-        level: Int,
-        vendor_value: Int,
-        default_skin: Option[Int],
-        flags: Set[String],
-        game_types: Set[String],
-        restrictions: Set[String],
-        details: ConsumableDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Item with Detailed {
+    id: Int,
+    chat_link: String,
+    name: String,
+    icon: Option[String],
+    description: Option[String],
+    `type`: String,
+    rarity: String,
+    level: Int,
+    vendor_value: Int,
+    default_skin: Option[Int],
+    flags: Set[String],
+    game_types: Set[String],
+    restrictions: Set[String],
+    details: ConsumableDetails,
+    buy: Option[Int],
+    sell: Option[Int]) extends Item with Detailed {
 
     override def t = details.`type`
 
@@ -223,15 +223,15 @@ case class Consumable(
 }
 
 case class ConsumableDetails(
-        `type`: String,
-        description: Option[String],
-        duration_ms: Option[Int],
-        unlock_type: Option[String],
-        color_id: Option[Int],
-        recipe_id: Option[Int],
-        apply_count: Option[Int],
-        name: Option[String],
-        skins: Option[List[Int]]) extends Details with Mappable {
+    `type`: String,
+    description: Option[String],
+    duration_ms: Option[Int],
+    unlock_type: Option[String],
+    color_id: Option[Int],
+    recipe_id: Option[Int],
+    apply_count: Option[Int],
+    name: Option[String],
+    skins: Option[List[Int]]) extends Details with Mappable {
 
     def toMap = Map(
         "consumable_type" -> `type`,
@@ -247,22 +247,22 @@ case class ConsumableDetails(
 }
 
 case class Container(
-        id: Int,
-        chat_link: String,
-        name: String,
-        icon: Option[String],
-        description: Option[String],
-        `type`: String,
-        rarity: String,
-        level: Int,
-        vendor_value: Int,
-        default_skin: Option[Int],
-        flags: Set[String],
-        game_types: Set[String],
-        restrictions: Set[String],
-        details: ContainerDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Item with Detailed {
+    id: Int,
+    chat_link: String,
+    name: String,
+    icon: Option[String],
+    description: Option[String],
+    `type`: String,
+    rarity: String,
+    level: Int,
+    vendor_value: Int,
+    default_skin: Option[Int],
+    flags: Set[String],
+    game_types: Set[String],
+    restrictions: Set[String],
+    details: ContainerDetails,
+    buy: Option[Int],
+    sell: Option[Int]) extends Item with Detailed {
 
     def withPrices(b: Option[Int], s: Option[Int]) =
         copy(buy = b, sell = s)
@@ -273,21 +273,21 @@ case class ContainerDetails(
     `type`: String) extends Details
 
 case class CraftingMaterial(
-        id: Int,
-        chat_link: String,
-        name: String,
-        icon: Option[String],
-        description: Option[String],
-        `type`: String,
-        rarity: String,
-        level: Int,
-        vendor_value: Int,
-        default_skin: Option[Int],
-        flags: Set[String],
-        game_types: Set[String],
-        restrictions: Set[String],
-        buy: Option[Int],
-        sell: Option[Int]) extends Item {
+    id: Int,
+    chat_link: String,
+    name: String,
+    icon: Option[String],
+    description: Option[String],
+    `type`: String,
+    rarity: String,
+    level: Int,
+    vendor_value: Int,
+    default_skin: Option[Int],
+    flags: Set[String],
+    game_types: Set[String],
+    restrictions: Set[String],
+    buy: Option[Int],
+    sell: Option[Int]) extends Item {
 
     def withPrices(b: Option[Int], s: Option[Int]) =
         copy(buy = b, sell = s)
@@ -295,22 +295,22 @@ case class CraftingMaterial(
 }
 
 case class GatheringTool(
-        id: Int,
-        chat_link: String,
-        name: String,
-        icon: Option[String],
-        description: Option[String],
-        `type`: String,
-        rarity: String,
-        level: Int,
-        vendor_value: Int,
-        default_skin: Option[Int],
-        flags: Set[String],
-        game_types: Set[String],
-        restrictions: Set[String],
-        details: GatheringToolDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Item with Detailed {
+    id: Int,
+    chat_link: String,
+    name: String,
+    icon: Option[String],
+    description: Option[String],
+    `type`: String,
+    rarity: String,
+    level: Int,
+    vendor_value: Int,
+    default_skin: Option[Int],
+    flags: Set[String],
+    game_types: Set[String],
+    restrictions: Set[String],
+    details: GatheringToolDetails,
+    buy: Option[Int],
+    sell: Option[Int]) extends Item with Detailed {
 
     override def t = details.`type`
 
@@ -323,22 +323,22 @@ case class GatheringToolDetails(
     `type`: String) extends Details
 
 case class Gizmo(
-        id: Int,
-        chat_link: String,
-        name: String,
-        icon: Option[String],
-        description: Option[String],
-        `type`: String,
-        rarity: String,
-        level: Int,
-        vendor_value: Int,
-        default_skin: Option[Int],
-        flags: Set[String],
-        game_types: Set[String],
-        restrictions: Set[String],
-        details: GizmoDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Item with Detailed {
+    id: Int,
+    chat_link: String,
+    name: String,
+    icon: Option[String],
+    description: Option[String],
+    `type`: String,
+    rarity: String,
+    level: Int,
+    vendor_value: Int,
+    default_skin: Option[Int],
+    flags: Set[String],
+    game_types: Set[String],
+    restrictions: Set[String],
+    details: GizmoDetails,
+    buy: Option[Int],
+    sell: Option[Int]) extends Item with Detailed {
 
     def withPrices(b: Option[Int], s: Option[Int]) =
         copy(buy = b, sell = s)
@@ -349,21 +349,21 @@ case class GizmoDetails(
     `type`: String) extends Details
 
 case class Key(
-        id: Int,
-        chat_link: String,
-        name: String,
-        icon: Option[String],
-        description: Option[String],
-        `type`: String,
-        rarity: String,
-        level: Int,
-        vendor_value: Int,
-        default_skin: Option[Int],
-        flags: Set[String],
-        game_types: Set[String],
-        restrictions: Set[String],
-        buy: Option[Int],
-        sell: Option[Int]) extends Item {
+    id: Int,
+    chat_link: String,
+    name: String,
+    icon: Option[String],
+    description: Option[String],
+    `type`: String,
+    rarity: String,
+    level: Int,
+    vendor_value: Int,
+    default_skin: Option[Int],
+    flags: Set[String],
+    game_types: Set[String],
+    restrictions: Set[String],
+    buy: Option[Int],
+    sell: Option[Int]) extends Item {
 
     def withPrices(b: Option[Int], s: Option[Int]) =
         copy(buy = b, sell = s)
@@ -371,22 +371,22 @@ case class Key(
 }
 
 case class MiniPet(
-        id: Int,
-        chat_link: String,
-        name: String,
-        icon: Option[String],
-        description: Option[String],
-        `type`: String,
-        rarity: String,
-        level: Int,
-        vendor_value: Int,
-        default_skin: Option[Int],
-        flags: Set[String],
-        game_types: Set[String],
-        restrictions: Set[String],
-        details: MiniPetDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Item {
+    id: Int,
+    chat_link: String,
+    name: String,
+    icon: Option[String],
+    description: Option[String],
+    `type`: String,
+    rarity: String,
+    level: Int,
+    vendor_value: Int,
+    default_skin: Option[Int],
+    flags: Set[String],
+    game_types: Set[String],
+    restrictions: Set[String],
+    details: MiniPetDetails,
+    buy: Option[Int],
+    sell: Option[Int]) extends Item {
 
     def withPrices(b: Option[Int], s: Option[Int]) =
         copy(buy = b, sell = s)
@@ -397,22 +397,22 @@ case class MiniPetDetails(
     minipet_id: Int)
 
 case class Tool(
-        id: Int,
-        chat_link: String,
-        name: String,
-        icon: Option[String],
-        description: Option[String],
-        `type`: String,
-        rarity: String,
-        level: Int,
-        vendor_value: Int,
-        default_skin: Option[Int],
-        flags: Set[String],
-        game_types: Set[String],
-        restrictions: Set[String],
-        details: ToolDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Item with Detailed {
+    id: Int,
+    chat_link: String,
+    name: String,
+    icon: Option[String],
+    description: Option[String],
+    `type`: String,
+    rarity: String,
+    level: Int,
+    vendor_value: Int,
+    default_skin: Option[Int],
+    flags: Set[String],
+    game_types: Set[String],
+    restrictions: Set[String],
+    details: ToolDetails,
+    buy: Option[Int],
+    sell: Option[Int]) extends Item with Detailed {
 
     override def t = details.`type`
 
@@ -426,21 +426,21 @@ case class ToolDetails(
     charges: Int) extends Details
 
 case class Trait(
-        id: Int,
-        chat_link: String,
-        name: String,
-        icon: Option[String],
-        description: Option[String],
-        `type`: String,
-        rarity: String,
-        level: Int,
-        vendor_value: Int,
-        default_skin: Option[Int],
-        flags: Set[String],
-        game_types: Set[String],
-        restrictions: Set[String],
-        buy: Option[Int],
-        sell: Option[Int]) extends Item {
+    id: Int,
+    chat_link: String,
+    name: String,
+    icon: Option[String],
+    description: Option[String],
+    `type`: String,
+    rarity: String,
+    level: Int,
+    vendor_value: Int,
+    default_skin: Option[Int],
+    flags: Set[String],
+    game_types: Set[String],
+    restrictions: Set[String],
+    buy: Option[Int],
+    sell: Option[Int]) extends Item {
 
     def withPrices(b: Option[Int], s: Option[Int]) =
         copy(buy = b, sell = s)
@@ -448,22 +448,22 @@ case class Trait(
 }
 
 case class Trinket(
-        id: Int,
-        chat_link: String,
-        name: String,
-        icon: Option[String],
-        description: Option[String],
-        `type`: String,
-        rarity: String,
-        level: Int,
-        vendor_value: Int,
-        default_skin: Option[Int],
-        flags: Set[String],
-        game_types: Set[String],
-        restrictions: Set[String],
-        details: TrinketDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Item with Detailed {
+    id: Int,
+    chat_link: String,
+    name: String,
+    icon: Option[String],
+    description: Option[String],
+    `type`: String,
+    rarity: String,
+    level: Int,
+    vendor_value: Int,
+    default_skin: Option[Int],
+    flags: Set[String],
+    game_types: Set[String],
+    restrictions: Set[String],
+    details: TrinketDetails,
+    buy: Option[Int],
+    sell: Option[Int]) extends Item with Detailed {
 
     override def t = details.`type`
 
@@ -481,21 +481,21 @@ case class TrinketDetails(
     stat_choices: Option[List[Int]]) extends Details
 
 case class Trophy(
-        id: Int,
-        chat_link: String,
-        name: String,
-        icon: Option[String],
-        description: Option[String],
-        `type`: String,
-        rarity: String,
-        level: Int,
-        vendor_value: Int,
-        default_skin: Option[Int],
-        flags: Set[String],
-        game_types: Set[String],
-        restrictions: Set[String],
-        buy: Option[Int],
-        sell: Option[Int]) extends Item {
+    id: Int,
+    chat_link: String,
+    name: String,
+    icon: Option[String],
+    description: Option[String],
+    `type`: String,
+    rarity: String,
+    level: Int,
+    vendor_value: Int,
+    default_skin: Option[Int],
+    flags: Set[String],
+    game_types: Set[String],
+    restrictions: Set[String],
+    buy: Option[Int],
+    sell: Option[Int]) extends Item {
 
     def withPrices(b: Option[Int], s: Option[Int]) =
         copy(buy = b, sell = s)
@@ -503,22 +503,22 @@ case class Trophy(
 }
 
 case class UpgradeComponent(
-        id: Int,
-        chat_link: String,
-        name: String,
-        icon: Option[String],
-        description: Option[String],
-        `type`: String,
-        rarity: String,
-        level: Int,
-        vendor_value: Int,
-        default_skin: Option[Int],
-        flags: Set[String],
-        game_types: Set[String],
-        restrictions: Set[String],
-        details: UpgradeComponentDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Item with Detailed {
+    id: Int,
+    chat_link: String,
+    name: String,
+    icon: Option[String],
+    description: Option[String],
+    `type`: String,
+    rarity: String,
+    level: Int,
+    vendor_value: Int,
+    default_skin: Option[Int],
+    flags: Set[String],
+    game_types: Set[String],
+    restrictions: Set[String],
+    details: UpgradeComponentDetails,
+    buy: Option[Int],
+    sell: Option[Int]) extends Item with Detailed {
 
     override def t = details.`type`
 
@@ -541,22 +541,22 @@ case class UpgradeInfixUpgrade(
     buff: Option[Buff])
 
 case class Weapon(
-        id: Int,
-        chat_link: String,
-        name: String,
-        icon: Option[String],
-        description: Option[String],
-        `type`: String,
-        rarity: String,
-        level: Int,
-        vendor_value: Int,
-        default_skin: Option[Int],
-        flags: Set[String],
-        game_types: Set[String],
-        restrictions: Set[String],
-        details: WeaponDetails,
-        buy: Option[Int],
-        sell: Option[Int]) extends Item with Detailed {
+    id: Int,
+    chat_link: String,
+    name: String,
+    icon: Option[String],
+    description: Option[String],
+    `type`: String,
+    rarity: String,
+    level: Int,
+    vendor_value: Int,
+    default_skin: Option[Int],
+    flags: Set[String],
+    game_types: Set[String],
+    restrictions: Set[String],
+    details: WeaponDetails,
+    buy: Option[Int],
+    sell: Option[Int]) extends Item with Detailed {
 
     override def t = details.`type`
 

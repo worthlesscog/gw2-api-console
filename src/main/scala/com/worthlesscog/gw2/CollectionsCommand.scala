@@ -1,8 +1,8 @@
 package com.worthlesscog.gw2
 
-import scala.reflect.ClassTag
+import Utils.{byName, dumpAndTally, isNumeric, priceItems, priceMinis, priceSkins, toMap}
 
-import Utils.{ byName, dumpAndTally, isNumeric, priceItems, priceMinis, priceSkins, toMap }
+import scala.reflect.ClassTag
 
 class CollectionsCommand extends AchievementsCommand("collections") {
 
@@ -10,7 +10,7 @@ class CollectionsCommand extends AchievementsCommand("collections") {
         case "nearly" :: Nil =>
             collections |> started |> incomplete |> dumpAndTally(nearly, completed, 50)
 
-        case i :: Nil if (i |> isNumeric) =>
+        case i :: Nil if i |> isNumeric =>
             collections.get(i.toInt) foreach priceCollection
 
         case Nil =>

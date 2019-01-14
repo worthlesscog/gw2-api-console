@@ -1,12 +1,11 @@
 package com.worthlesscog.gw2
 
-import Utils.optLabelledFloat
-import spray.json.{ DefaultJsonProtocol, JsValue }
+import spray.json.{DefaultJsonProtocol, JsValue}
 
 case class ItemStatSet(
-        id: Int,
-        name: String,
-        attributes: Option[List[Attribute]]) extends Id[Int] with Mappable with Named {
+    id: Int,
+    name: String,
+    attributes: Option[List[Attribute]]) extends Id[Int] with Mappable with Named {
 
     def attrs = attributes.fold("") { _.mkString(", ") }
 
@@ -20,9 +19,9 @@ case class ItemStatSet(
 }
 
 case class Attribute(
-        attribute: String,
-        multiplier: Float,
-        value: Int) {
+    attribute: String,
+    multiplier: Float,
+    value: Int) {
 
     override def toString = attribute + " multiplier " + multiplier + " / value " + value
 

@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import Utils.{ dumpAndTally, info, nameOrId, prices }
+import Utils.{dumpAndTally, info, nameOrId, prices}
 
 class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](label) {
 
@@ -8,7 +8,7 @@ class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](la
         val (steps, count) = stepsDone(achievements(a.id), accountAchievements.get(a.id))
         val progress = if (count == steps) "" else s" ($count/$steps)"
         val hidden = if (a.isVisible) "" else " *"
-        s"${a.name}$progress$hidden"
+        s"${ a.name }$progress$hidden"
     }
 
     def describeItem(id: Int) = "Item, " + nameOrId(items, id) + maybeRarity(items, id) + maybePrices(items, id)
@@ -23,7 +23,7 @@ class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](la
         dumpTitle(a.name, count, steps)
         dumpRequirement(a.requirement)
         a.bits foreach { b =>
-            val ticks = if (steps == count) (0 to count - 1).toSet else aa.fold(Set.empty[Int]) { _.bits.fold(Set.empty[Int]) { _.toSet } }
+            val ticks = if (steps == count) (0 until count).toSet else aa.fold(Set.empty[Int]) { _.bits.fold(Set.empty[Int]) { _.toSet } }
             b.zipWithIndex foreach {
                 case (a, n) =>
                     val state = if (ticks contains n) TICK else " "
@@ -33,24 +33,24 @@ class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](la
                         case SkinProgress(_, id)    => id map describeSkin
                         case TextProgress(_, text)  => text
                     }
-                    s"    $state  ${label.getOrElse("")}\n" |> info
+                    s"    $state  ${ label.getOrElse("") }\n" |> info
             }
         }
     }
 
-    def dumpRequirement(s: String) = if (s nonEmpty) s"  ${s}\n" |> info
+    def dumpRequirement(s: String) = if (s nonEmpty) s"  ${ s }\n" |> info
 
     def dumpTitle(s: String, count: Int, steps: Int) = s"  $s ($count/$steps)\n" |> info
 
-    def dumpTree(filter: (Achievement) => Boolean) = {
-        achievementGroups.values.filter(!_.categories.isEmpty).toList.sortBy(_.order) foreach { g =>
-            s"  ${g.name} (${g.id})\n" |> info
-            g.categories.map(achievementCategories).filter(!_.achievements.isEmpty).toList.sortBy(_.order) foreach { c =>
-                val l = c.achievements.map(achievements).toList.sortBy(_.name).filter(filter)
+    def dumpTree(filter: Achievement => Boolean) = {
+        achievementGroups.values.filter(_.categories.nonEmpty).toList.sortBy(_.order) foreach { g =>
+            s"  ${ g.name } (${ g.id })\n" |> info
+            g.categories.map(achievementCategories).filter(_.achievements.nonEmpty).toList.sortBy(_.order) foreach { c =>
+                val l = c.achievements.map(achievements).sortBy(_.name).filter(filter)
                 if (l nonEmpty) {
-                    s"    ${printable(c.name)} (${c.id})\n" |> info
+                    s"    ${ printable(c.name) } (${ c.id })\n" |> info
                     l foreach { a =>
-                        s"      ${completed(a)}\n" |> info
+                        s"      ${ completed(a) }\n" |> info
                     }
                 }
             }
@@ -59,13 +59,13 @@ class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](la
 
     override def execute(cmd: List[String]): Unit = cmd match {
         case "hidden" :: Nil =>
-            dumpTree((a) => !(a.isVisible))
+            dumpTree(a => !a.isVisible)
 
         case "nearly" :: Nil =>
             achievements |> started |> incomplete |> dumpAndTally(nearly, completed, 50)
 
         case "tree" :: Nil =>
-            dumpTree((a) => true)
+            dumpTree(a => true)
 
         case _ =>
             execute(cmd, achievements, achievementFlags, achievementTypes)
@@ -88,7 +88,7 @@ class AchievementsCommand(label: String) extends FlagNameTypeMap[Achievement](la
     def nearly(a: (_, Achievement), b: (_, Achievement)) = {
         val (c1, s1) = stepsDone(a._2, accountAchievements.get(a._2.id))
         val (c2, s2) = stepsDone(b._2, accountAchievements.get(b._2.id))
-        (c1.toFloat / s1 < c2.toFloat / s2)
+        c1.toFloat / s1 < c2.toFloat / s2
     }
 
     def printable(s: String) = s.filter(!_.isControl)

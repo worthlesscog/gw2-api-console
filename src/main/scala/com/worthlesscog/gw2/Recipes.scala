@@ -1,23 +1,23 @@
 package com.worthlesscog.gw2
 
-import Utils.{ noneOrSorted, noneOrString }
-import spray.json.{ DefaultJsonProtocol, JsValue }
+import Utils.{noneOrSorted, noneOrString}
+import spray.json.{DefaultJsonProtocol, JsValue}
 
 case class Recipe(
-        id: Int,
-        `type`: String,
-        output_item_id: Int,
-        output_item_count: Int,
-        time_to_craft_ms: Int,
-        disciplines: Set[String],
-        min_rating: Int,
-        flags: Set[String],
-        ingredients: List[ItemCount],
-        guild_ingredients: Option[List[UpgradeCount]],
-        output_upgrade_id: Option[Int],
-        chat_link: String,
-        buy: Option[Int],
-        sell: Option[Int]) extends Flagged with Id[Int] with Mappable with Priced[Recipe] with Typed {
+    id: Int,
+    `type`: String,
+    output_item_id: Int,
+    output_item_count: Int,
+    time_to_craft_ms: Int,
+    disciplines: Set[String],
+    min_rating: Int,
+    flags: Set[String],
+    ingredients: List[ItemCount],
+    guild_ingredients: Option[List[UpgradeCount]],
+    output_upgrade_id: Option[Int],
+    chat_link: String,
+    buy: Option[Int],
+    sell: Option[Int]) extends Flagged with Id[Int] with Mappable with Priced[Recipe] with Typed {
 
     def gi = guild_ingredients.fold("None") { _.map { uc => uc.count + " x #" + uc.upgrade_id } mkString ", " }
     def il = ingredients map { ic => ic.count + " x #" + ic.item_id } mkString ", "

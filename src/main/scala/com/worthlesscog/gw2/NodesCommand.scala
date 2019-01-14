@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import Utils.{ info, longest }
+import Utils.info
 
 class NodesCommand extends Command {
 
@@ -19,7 +19,7 @@ class NodesCommand extends Command {
     }
 
     def ticked(s: Set[String])(v: String) =
-        s"  ${if (s contains v) TICK else " "}  $v\n"
+        s"  ${ if (s contains v) TICK else " " }  $v\n"
 
     val uses = Some(Map("nodes" -> "list home instance nodes"))
 

@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import Utils.{ asString, byName, dumpAndTally }
+import Utils.{asString, byName, dumpAndTally}
 
 class AchievementCategoriesCommand extends Command {
 

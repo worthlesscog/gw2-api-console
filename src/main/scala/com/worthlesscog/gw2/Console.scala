@@ -14,7 +14,7 @@ class Console {
             case "quit" :: _ =>
                 false
 
-            case h :: t if (h nonEmpty) =>
+            case h :: t if h nonEmpty =>
                 val p = bindings filter { case (k, _) => k startsWith h }
                 p.size match {
                     case 0 => s"$h??\n" |> info

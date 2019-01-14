@@ -1,20 +1,20 @@
 package com.worthlesscog.gw2
 
-import Utils.{ noneOrSorted, noneOrString }
-import spray.json.{ DefaultJsonProtocol, JsValue }
+import com.worthlesscog.gw2.Utils.{noneOrSorted, noneOrString}
+import spray.json.{DefaultJsonProtocol, JsValue}
 
 case class Color(
-        id: Int,
-        name: String,
-        base_rgb: List[Int],
-        cloth: ColorDetails,
-        leather: ColorDetails,
-        metal: ColorDetails,
-        item: Option[Int],
-        categories: Set[String],
-        collection: Option[String],
-        buy: Option[Int],
-        sell: Option[Int]) extends Categorized with Collected[Color] with Id[Int] with Itemized with Mappable with Named with Priced[Color] {
+    id: Int,
+    name: String,
+    base_rgb: List[Int],
+    cloth: ColorDetails,
+    leather: ColorDetails,
+    metal: ColorDetails,
+    item: Option[Int],
+    categories: Set[String],
+    collection: Option[String],
+    buy: Option[Int],
+    sell: Option[Int]) extends Categorized with Collected[Color] with Id[Int] with Itemized with Mappable with Named with Priced[Color] {
 
     def inCollection(s: String) = copy(collection = Some(s))
 
@@ -37,12 +37,12 @@ case class Color(
 }
 
 case class ColorDetails(
-        brightness: Int,
-        contrast: Float,
-        hue: Int,
-        saturation: Float,
-        lightness: Float,
-        rgb: List[Int]) {
+    brightness: Int,
+    contrast: Float,
+    hue: Int,
+    saturation: Float,
+    lightness: Float,
+    rgb: List[Int]) {
 
     def rgbs = rgb.mkString("[", ", ", "]")
 

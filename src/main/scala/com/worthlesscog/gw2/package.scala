@@ -3,7 +3,7 @@ package com.worthlesscog
 import java.nio.file.Paths
 
 import com.typesafe.scalalogging.Logger
-import com.worthlesscog.gw2.Utils.{ mapRecipeItems, mapSkinItems }
+import com.worthlesscog.gw2.Utils.{mapRecipeItems, mapSkinItems}
 
 package object gw2 {
 
@@ -43,6 +43,7 @@ package object gw2 {
         new NewCommand,
         new NodesCommand,
         new PetsCommand,
+        new PricesCommand,
         new RecipesCommand,
         new SkinsCommand,
         new TitlesCommand,

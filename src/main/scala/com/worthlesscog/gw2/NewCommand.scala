@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import Utils.{ asString, byName, cmpRight, dumpAndTally, toItems }
+import Utils.{asString, byName, cmpRight, dumpAndTally, toItems}
 
 class NewCommand extends Command {
 

@@ -1,6 +1,6 @@
 package com.worthlesscog.gw2
 
-import Utils.{ asString, byName, dumpAndTally, ofDetailType, priceSkins }
+import Utils.{asString, byName, dumpAndTally, ofDetailType, priceSkins}
 
 class WeaponsCommand extends SkinsCommand {
 
