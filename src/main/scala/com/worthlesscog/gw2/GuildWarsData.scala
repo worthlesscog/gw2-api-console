@@ -32,4 +32,91 @@ object GuildWarsData {
         "Winter Chimes" -> Set("Dry Silver", "Gold Fusion", "Golden Sheen", "Matriarch Brass", "Murky Grey", "Vintage Silver"),
         "Zhaitan" -> Set("Abyssal Sea", "Decay", "Risen", "Grave", "Darkness", "Worn Bone"))
 
+    // XXX - messy
+    val mountPacks = SortedMap(
+        "Default" -> Set(
+            "Raptor/raptor",
+            "Springer/springer",
+            "Skimmer/skimmer",
+            "Jackal/jackal",
+            "Griffon/griffon",
+            "Roller Beetle/roller_beetle"),
+        "Gem Store" -> Set(
+            "Dreadnought/raptor", "Resplendent Avialan/raptor",
+            "Summit Wildhorn/springer", "Sun Temple Gecko/springer",
+            "Umbral Demon/skimmer",
+            "Reforged Warhound/jackal", "Shrine Guardian/jackal",
+            "Grand Lion/griffon", "Nightfang/griffon",
+            "Tremor Armadillo/roller_beetle"),
+        "Mount Adoption" -> Set(
+            "Canyon Spiketail/raptor", "Coastal Spiketail/raptor", "Flamelander/raptor", "Savannah Monitor/raptor", "Storm Ridge/raptor", "Striped Tri-horn/raptor",
+            "Arctic Jerboa/springer", "Desert Lop/springer", "Elonian Jackalope/springer", "Primal Hare/springer", "Tawny Hare/springer", "Windy Spot/springer",
+            "Bright Ringfin/skimmer", "Dajkah Lantern/skimmer", "Oasis Skate/skimmer", "Oceanic Ray/skimmer", "River Moth Wing/skimmer", "Spined Longtail/skimmer",
+            "Banded Mystic/jackal", "Crowned Ancient/jackal", "Polished Stone/jackal", "Pyroclast/jackal", "Stardust/jackal", "Twin Sands/jackal",
+            "Badlands Stalker/griffon", "Clouded Corvus/griffon", "Fire Pinion/griffon", "Highlands Harrier/griffon", "Spotted Sylph/griffon", "Starbound/griffon"),
+        "Desert Racer" -> Set(
+            "Ntouka Snakescale/raptor", "Starscale/raptor",
+            "Kourna Jackrabbit/springer", "Painted Mesa/springer",
+            "Arid Hammerhead/skimmer", "Iceberg/skimmer",
+            "Dune Mastiff/jackal", "Mirror Masked/jackal",
+            "Northern Feather Wing/griffon", "Storm Chaser/griffon", "Tufted Night Eye/griffon",
+            "Colossal Ladybird/roller_beetle", "Funerary Scarab/roller_beetle", "Primeval/roller_beetle", "Trailblazer/roller_beetle"),
+        "Distant Lands" -> Set(
+            "Auric Salamander/raptor", "Luminous Prowler/raptor",
+            "Krytan Lop/springer", "Starfall/springer", "Timberland Badged/springer",
+            "Banded Wave Fin/skimmer", "Southsun Torpedo/skimmer",
+            "Exalted Ley Hunter/jackal", "Liminal Moorhound/jackal",
+            "Sand Souled/griffon", "Shiverpeaks Pileated/griffon", "Snow Stalker/griffon",
+            "Alloyed Construct/roller_beetle", "Jagged Kournan/roller_beetle", "Striped Bahdzan/roller_beetle"),
+        "Istani Isles" -> Set(
+            "Dzalana Ice Scale/raptor", "Lahtenda Bog Hunter/raptor", "Striped Jarin/raptor",
+            "Issnur Long Hair/springer", "Primeval/springer", "Sargol Thunderer/springer",
+            "Oceanic Broadtail/skimmer", "Primus Beta/skimmer", "Stardrift/skimmer",
+            "Ceylon Cut/jackal", "Iceflow/jackal", "Primeval/jackal",
+            "Exalted Sky Sentry/griffon", "Istani Bald/griffon", "Sky Bandit/griffon"),
+        "Awakened Mounts" -> Set(
+            "Awakened Raptor/raptor",
+            "Awakened Springer/springer",
+            "Awakened Skimmer/skimmer",
+            "Awakened Jackal/jackal",
+            "Awakened Griffon/griffon"),
+        "Branded Mounts" -> Set(
+            "Branded Raptor/raptor",
+            "Branded Springer/springer",
+            "Branded Skimmer/skimmer",
+            "Branded Jackal/jackal",
+            "Branded Griffon/griffon"),
+        "Cozy Wintersday Mounts" -> Set(
+            "Cozy Wintersday Raptor/raptor",
+            "Cozy Wintersday Springer/springer",
+            "Cozy Wintersday Skimmer/skimmer",
+            "Cozy Wintersday Jackal/jackal",
+            "Cozy Wintersday Griffon/griffon"),
+        "Exo-Suit Mounts" -> Set(
+            "Exo-Suit Raptor/raptor",
+            "Exo-Suit Springer/springer",
+            "Exo-Suit Skimmer/skimmer",
+            "Exo-Suit Jackal/jackal",
+            "Exo-Suit Griffon/griffon"),
+        "Mad Realm Mounts" -> Set(
+            "Mad Realm Raptor/raptor",
+            "Mad Realm Springer/springer",
+            "Mad Realm Skimmer/skimmer",
+            "Mad Realm Jackal/jackal",
+            "Mad Realm Griffon/griffon"),
+        "Shiverpeaks Mounts" -> Set(
+            "Shiverpeaks Raptor/raptor",
+            "Shiverpeaks Springer/springer",
+            "Shiverpeaks Skimmer/skimmer",
+            "Shiverpeaks Jackal/jackal",
+            "Shiverpeaks Griffon/griffon"),
+        "Spooky Mounts" -> Set(
+            "Spooky Raptor/raptor",
+            "Spooky Springer/springer",
+            "Spooky Skimmer/skimmer",
+            "Spooky Jackal/jackal",
+            "Spooky Griffon/griffon")
+    )
+
+
 }

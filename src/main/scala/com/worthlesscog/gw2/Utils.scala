@@ -3,7 +3,7 @@ package com.worthlesscog.gw2
 import java.io.{BufferedInputStream, FileInputStream, FileOutputStream, InputStream, ObjectInputStream, ObjectOutputStream}
 import java.nio.file.Path
 
-import GuildWarsData.dyeSets
+import GuildWarsData.{dyeSets, mountPacks}
 
 import scala.collection.immutable.SortedMap
 import scala.reflect.ClassTag
@@ -116,6 +116,7 @@ object Utils {
         itemStats = loadItemStats
         masteries = loadMasteries
         minis = loadMinis
+        mounts = loadMounts
         nodes = loadNodes
         races = loadRaces
         recipes = loadRecipes
@@ -148,6 +149,9 @@ object Utils {
 
     def loadMinis =
         home.resolve(MINIS) |> Loader.loadMap(Minis)
+
+    def loadMounts =
+        home.resolve(MOUNTS) |> Loader.loadMap(Mounts)
 
     def loadNodes =
         home.resolve(NODES) |> Loader.loadPersistentSet(Nodes)
@@ -358,6 +362,7 @@ object Utils {
             accountBuys = Loader.downloadAuthenticatedBlobs(AccountBuys, t)
             accountDyes = Loader.downloadAuthenticatedIds(AccountDyes, t)
             accountMinis = Loader.downloadAuthenticatedIds(AccountMinis, t)
+            accountMounts = Loader.downloadAuthenticatedIds(AccountMounts, t)
             accountNodes = Loader.downloadAuthenticatedIds(AccountNodes, t)
             accountRecipes = Loader.downloadAuthenticatedIds(AccountRecipes, t)
             accountSkins = Loader.downloadAuthenticatedIds(AccountSkins, t)
@@ -372,6 +377,7 @@ object Utils {
         updateItemStats
         updateMasteries
         updateMinis
+        updateMounts
         // updateNodes
         updateRaces
         updateRecipes
@@ -387,6 +393,7 @@ object Utils {
         disciplines = recipes.values.flatMap { _.disciplines }.toSet
         itemFlags = flagsOf(items)
         itemTypes = typesOf(items)
+        mountTypes = typesOf(mounts)
         raceNames = races.keys.toSet
         recipeFlags = flagsOf(recipes)
         recipeTypes = typesOf(recipes)
@@ -442,6 +449,16 @@ object Utils {
         }
     }
 
+    def updateMountCollectionsFromData[K, V <: Collected[V] with Id[K] with Named](collections: Map[String, Set[String]])(m: Map[Int, Mount]) = {
+        collections.foldLeft(m) {
+            case (m, (s, set)) =>
+                set.foldLeft(m) { (m, n) =>
+                    val nt = n.split("/")
+                    m.values.find(mnt => mnt.name == nt(0) && mnt.mount == nt(1)).fold(m) { c => m + (c.id -> c.inCollection(s)) }
+                }
+        }
+    }
+
     def updateColors = {
         val (u, m) = home.resolve(COLORS) |> Loader.updateMap(Colors, colors)
         newColors = u
@@ -470,6 +487,13 @@ object Utils {
         val (u, m) = home.resolve(MINIS) |> Loader.updateMap(Minis, minis)
         newMinis = u
         minis = m |> updateCollectionsFromAchievements("Minipet")
+    }
+
+    def updateMounts = {
+        val (u, m) = home.resolve(MOUNTS) |> Loader.updateMap(Mounts, mounts)
+        newMounts = u
+        mounts = m
+        mounts = m |> updateMountCollectionsFromData(mountPacks)
     }
 
     def updatePrice[T <: Priced[T]](p: Price)(t: T) =

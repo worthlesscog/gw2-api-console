@@ -19,6 +19,7 @@ package object gw2 {
     val ITEM_STATS = "gw2-item-stats.gw2"
     val MASTERIES = "gw2-masteries.gw2"
     val MINIS = "gw2-minis.gw2"
+    val MOUNTS = "gw2-mounts.gw2"
     val NODES = "gw2-nodes.gw2"
     val RACES = "gw2-races.gw2"
     val RECIPES = "gw2-recipes.gw2"
@@ -40,6 +41,7 @@ package object gw2 {
         new ItemsCommand,
         new LockedCommand,
         new MasteriesCommand,
+        new MountsCommand,
         new NewCommand,
         new NodesCommand,
         new PetsCommand,
@@ -61,6 +63,7 @@ package object gw2 {
     var accountBuys = Map.empty[Int, AccountBuy]
     var accountDyes = Set.empty[Int]
     var accountMinis = Set.empty[Int]
+    var accountMounts = Set.empty[Int]
     var accountNodes = Set.empty[String]
     var accountRecipes = Set.empty[Int]
     var accountSkins = Set.empty[Int]
@@ -74,6 +77,7 @@ package object gw2 {
     var itemStats, newItemStats = Map.empty[Int, ItemStatSet]
     var masteries, newMasteries = Map.empty[Int, Mastery]
     var minis, newMinis = Map.empty[Int, Mini]
+    var mounts, newMounts = Map.empty[Int, Mount]
     var nodes = Set.empty[String]
     var races, newRaces = Map.empty[String, Race]
     var recipes, newRecipes = Map.empty[Int, Recipe]
@@ -92,6 +96,7 @@ package object gw2 {
     var disciplines = Set.empty[String]
     var itemFlags = Set.empty[String]
     var itemTypes = Set.empty[String]
+    var mountTypes = Set.empty[String]
     var raceNames = Set.empty[String]
     var recipeFlags = Set.empty[String]
     var recipeTypes = Set.empty[String]

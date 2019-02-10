@@ -19,6 +19,7 @@ class FlagsCommand extends Command {
             // dumpTypes("Item Rarities", itemRarities.toList)
             dumpTypes("Item Flags", itemFlags.toList)
             dumpTypes("Item Types", itemTypes.toList)
+            dumpTypes("Mount Types", mountTypes.toList)
             dumpTypes("Races", raceNames.toList)
             dumpTypes("Recipe Flags", recipeFlags.toList)
             dumpTypes("Recipe Types", recipeTypes.toList)
