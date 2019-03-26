@@ -24,6 +24,7 @@ object GuildWarsData {
         "Metallurgic" -> Set("Amenity", "Fling", "Onset", "Perseverance", "Prosperity", "Recall"),
         "Mordremoth" -> Set("Abyssal Forest", "Auric", "Arid", "Bloom", "Jungle", "Nightmare"),
         "Primordus" -> Set("Bloody Red", "Destroyer Orange", "Incandescent", "Magma", "Scorched", "Sunfire Lava"),
+        "Sacred" -> Set("Radiant Gold", "Cerulean Sky", "Dawn", "Cerulean Night", "Radiant Brass", "Celestial Blue"),
         "Shadow" -> Set("Shadow Abyss", "Shadow Blue", "Shadow Green", "Shadow Magenta", "Shadow Orange", "Shadow Purple", "Shadow Red", "Shadow Turquoise", "Shadow Violet", "Shadow Yellow"),
         "Solar and Lunar" -> Set("Blue Whale", "Daybreak", "Glossy Black", "Midnight Bronze", "Rose Gold", "Silver Satin"),
         "Taimi" -> Set("Electro Blue", "Electro Lemon", "Electro Lime", "Electro Peach", "Electro Pink", "Electro Purple"),
