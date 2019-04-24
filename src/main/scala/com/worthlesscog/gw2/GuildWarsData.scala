@@ -116,8 +116,15 @@ object GuildWarsData {
             "Spooky Springer/springer",
             "Spooky Skimmer/skimmer",
             "Spooky Jackal/jackal",
-            "Spooky Griffon/griffon")
+            "Spooky Griffon/griffon"),
+        "Exotic Breeds" -> Set(
+            "Masked Runner/raptor", "Primordial Raptor/raptor", "Exalted Gate Guardian/raptor",
+            "Savannah Stripetail/springer", "Brisban Brushtail/springer", "Alloyed Irontail/springer",
+            "Spotted Orchid/skimmer", "Sand Souled/skimmer",
+            "Vabbian Lightpaw/jackal", "Alloyed Quicksilver/jackal",
+            "Kournan Bright-Tail/griffon", "Primeval/griffon", "Arctic Icewing/griffon",
+            "Ntouka Snakeshell/roller_beetle", "Starshell/roller_beetle"
+        )
     )
-
 
 }
