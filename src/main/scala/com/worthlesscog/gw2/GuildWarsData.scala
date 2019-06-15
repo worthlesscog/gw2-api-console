@@ -45,10 +45,11 @@ object GuildWarsData {
         "Gem Store" -> Set(
             "Dreadnought/raptor", "Resplendent Avialan/raptor",
             "Summit Wildhorn/springer", "Sun Temple Gecko/springer",
-            "Umbral Demon/skimmer",
+            "Magnificent Hummingbird/skimmer", "Umbral Demon/skimmer",
             "Reforged Warhound/jackal", "Shrine Guardian/jackal",
             "Grand Lion/griffon", "Nightfang/griffon",
-            "Tremor Armadillo/roller_beetle"),
+            "Tremor Armadillo/roller_beetle",
+            "Shimmerwing/skyscale"),
         "Mount Adoption" -> Set(
             "Canyon Spiketail/raptor", "Coastal Spiketail/raptor", "Flamelander/raptor", "Savannah Monitor/raptor", "Storm Ridge/raptor", "Striped Tri-horn/raptor",
             "Arctic Jerboa/springer", "Desert Lop/springer", "Elonian Jackalope/springer", "Primal Hare/springer", "Tawny Hare/springer", "Windy Spot/springer",
@@ -123,8 +124,13 @@ object GuildWarsData {
             "Spotted Orchid/skimmer", "Sand Souled/skimmer",
             "Vabbian Lightpaw/jackal", "Alloyed Quicksilver/jackal",
             "Kournan Bright-Tail/griffon", "Primeval/griffon", "Arctic Icewing/griffon",
-            "Ntouka Snakeshell/roller_beetle", "Starshell/roller_beetle"
-        )
+            "Ntouka Snakeshell/roller_beetle", "Starshell/roller_beetle"),
+        "Warclaw Frontline" -> Set(
+            "Assault Warclaw/warclaw",
+            "Branded Warclaw/warclaw",
+            "Embermane Warclaw/warclaw",
+            "Outrider Warclaw/warclaw",
+            "Vanguard Warclaw/warclaw")
     )
 
 }
