@@ -41,7 +41,8 @@ object GuildWarsData {
             "Skimmer/skimmer",
             "Jackal/jackal",
             "Griffon/griffon",
-            "Roller Beetle/roller_beetle"),
+            "Roller Beetle/roller_beetle",
+            "Skyscale/skyscale"),
         "Gem Store" -> Set(
             "Dreadnought/raptor", "Resplendent Avialan/raptor",
             "Summit Wildhorn/springer", "Sun Temple Gecko/springer",
@@ -130,7 +131,13 @@ object GuildWarsData {
             "Branded Warclaw/warclaw",
             "Embermane Warclaw/warclaw",
             "Outrider Warclaw/warclaw",
-            "Vanguard Warclaw/warclaw")
+            "Vanguard Warclaw/warclaw"),
+        "Skyscale Ascension" -> Set(
+            "Caldera Skyscale/skyscale",
+            "Axejaw Skyscale/skyscale",
+            "Flare-Marked Skyscale/skyscale",
+            "Bioluminescent Skyscale/skyscale",
+            "Branded Skyscale/skyscale")
     )
 
 }
