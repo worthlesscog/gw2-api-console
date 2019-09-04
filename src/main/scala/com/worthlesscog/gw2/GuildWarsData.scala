@@ -43,40 +43,6 @@ object GuildWarsData {
             "Griffon/griffon",
             "Roller Beetle/roller_beetle",
             "Skyscale/skyscale"),
-        "Gem Store" -> Set(
-            "Dreadnought/raptor", "Resplendent Avialan/raptor",
-            "Summit Wildhorn/springer", "Sun Temple Gecko/springer",
-            "Magnificent Hummingbird/skimmer", "Umbral Demon/skimmer",
-            "Reforged Warhound/jackal", "Shrine Guardian/jackal",
-            "Grand Lion/griffon", "Nightfang/griffon",
-            "Tremor Armadillo/roller_beetle",
-            "Shimmerwing/skyscale"),
-        "Mount Adoption" -> Set(
-            "Canyon Spiketail/raptor", "Coastal Spiketail/raptor", "Flamelander/raptor", "Savannah Monitor/raptor", "Storm Ridge/raptor", "Striped Tri-horn/raptor",
-            "Arctic Jerboa/springer", "Desert Lop/springer", "Elonian Jackalope/springer", "Primal Hare/springer", "Tawny Hare/springer", "Windy Spot/springer",
-            "Bright Ringfin/skimmer", "Dajkah Lantern/skimmer", "Oasis Skate/skimmer", "Oceanic Ray/skimmer", "River Moth Wing/skimmer", "Spined Longtail/skimmer",
-            "Banded Mystic/jackal", "Crowned Ancient/jackal", "Polished Stone/jackal", "Pyroclast/jackal", "Stardust/jackal", "Twin Sands/jackal",
-            "Badlands Stalker/griffon", "Clouded Corvus/griffon", "Fire Pinion/griffon", "Highlands Harrier/griffon", "Spotted Sylph/griffon", "Starbound/griffon"),
-        "Desert Racer" -> Set(
-            "Ntouka Snakescale/raptor", "Starscale/raptor",
-            "Kourna Jackrabbit/springer", "Painted Mesa/springer",
-            "Arid Hammerhead/skimmer", "Iceberg/skimmer",
-            "Dune Mastiff/jackal", "Mirror Masked/jackal",
-            "Northern Feather Wing/griffon", "Storm Chaser/griffon", "Tufted Night Eye/griffon",
-            "Colossal Ladybird/roller_beetle", "Funerary Scarab/roller_beetle", "Primeval/roller_beetle", "Trailblazer/roller_beetle"),
-        "Distant Lands" -> Set(
-            "Auric Salamander/raptor", "Luminous Prowler/raptor",
-            "Krytan Lop/springer", "Starfall/springer", "Timberland Badged/springer",
-            "Banded Wave Fin/skimmer", "Southsun Torpedo/skimmer",
-            "Exalted Ley Hunter/jackal", "Liminal Moorhound/jackal",
-            "Sand Souled/griffon", "Shiverpeaks Pileated/griffon", "Snow Stalker/griffon",
-            "Alloyed Construct/roller_beetle", "Jagged Kournan/roller_beetle", "Striped Bahdzan/roller_beetle"),
-        "Istani Isles" -> Set(
-            "Dzalana Ice Scale/raptor", "Lahtenda Bog Hunter/raptor", "Striped Jarin/raptor",
-            "Issnur Long Hair/springer", "Primeval/springer", "Sargol Thunderer/springer",
-            "Oceanic Broadtail/skimmer", "Primus Beta/skimmer", "Stardrift/skimmer",
-            "Ceylon Cut/jackal", "Iceflow/jackal", "Primeval/jackal",
-            "Exalted Sky Sentry/griffon", "Istani Bald/griffon", "Sky Bandit/griffon"),
         "Awakened Mounts" -> Set(
             "Awakened Raptor/raptor",
             "Awakened Springer/springer",
@@ -95,30 +61,26 @@ object GuildWarsData {
             "Cozy Wintersday Skimmer/skimmer",
             "Cozy Wintersday Jackal/jackal",
             "Cozy Wintersday Griffon/griffon"),
+        "Desert Racer" -> Set(
+            "Ntouka Snakescale/raptor", "Starscale/raptor",
+            "Kourna Jackrabbit/springer", "Painted Mesa/springer",
+            "Arid Hammerhead/skimmer", "Iceberg/skimmer",
+            "Dune Mastiff/jackal", "Mirror Masked/jackal",
+            "Northern Feather Wing/griffon", "Storm Chaser/griffon", "Tufted Night Eye/griffon",
+            "Colossal Ladybird/roller_beetle", "Funerary Scarab/roller_beetle", "Primeval/roller_beetle", "Trailblazer/roller_beetle"),
+        "Distant Lands" -> Set(
+            "Auric Salamander/raptor", "Luminous Prowler/raptor",
+            "Krytan Lop/springer", "Starfall/springer", "Timberland Badged/springer",
+            "Banded Wave Fin/skimmer", "Southsun Torpedo/skimmer",
+            "Exalted Ley Hunter/jackal", "Liminal Moorhound/jackal",
+            "Sand Souled/griffon", "Shiverpeaks Pileated/griffon", "Snow Stalker/griffon",
+            "Alloyed Construct/roller_beetle", "Jagged Kournan/roller_beetle", "Striped Bahdzan/roller_beetle"),
         "Exo-Suit Mounts" -> Set(
             "Exo-Suit Raptor/raptor",
             "Exo-Suit Springer/springer",
             "Exo-Suit Skimmer/skimmer",
             "Exo-Suit Jackal/jackal",
             "Exo-Suit Griffon/griffon"),
-        "Mad Realm Mounts" -> Set(
-            "Mad Realm Raptor/raptor",
-            "Mad Realm Springer/springer",
-            "Mad Realm Skimmer/skimmer",
-            "Mad Realm Jackal/jackal",
-            "Mad Realm Griffon/griffon"),
-        "Shiverpeaks Mounts" -> Set(
-            "Shiverpeaks Raptor/raptor",
-            "Shiverpeaks Springer/springer",
-            "Shiverpeaks Skimmer/skimmer",
-            "Shiverpeaks Jackal/jackal",
-            "Shiverpeaks Griffon/griffon"),
-        "Spooky Mounts" -> Set(
-            "Spooky Raptor/raptor",
-            "Spooky Springer/springer",
-            "Spooky Skimmer/skimmer",
-            "Spooky Jackal/jackal",
-            "Spooky Griffon/griffon"),
         "Exotic Breeds" -> Set(
             "Masked Runner/raptor", "Primordial Raptor/raptor", "Exalted Gate Guardian/raptor",
             "Savannah Stripetail/springer", "Brisban Brushtail/springer", "Alloyed Irontail/springer",
@@ -126,18 +88,65 @@ object GuildWarsData {
             "Vabbian Lightpaw/jackal", "Alloyed Quicksilver/jackal",
             "Kournan Bright-Tail/griffon", "Primeval/griffon", "Arctic Icewing/griffon",
             "Ntouka Snakeshell/roller_beetle", "Starshell/roller_beetle"),
-        "Warclaw Frontline" -> Set(
-            "Assault Warclaw/warclaw",
-            "Branded Warclaw/warclaw",
-            "Embermane Warclaw/warclaw",
-            "Outrider Warclaw/warclaw",
-            "Vanguard Warclaw/warclaw"),
+        "Gem Store" -> Set(
+            "Dreadnought/raptor", "Gallant Lightbearer/raptor", "Resplendent Avialan/raptor",
+            "Summit Wildhorn/springer", "Sun Temple Gecko/springer",
+            "Magnificent Hummingbird/skimmer", "Umbral Demon/skimmer",
+            "Reforged Warhound/jackal", "Shrine Guardian/jackal",
+            "Grand Lion/griffon", "Nightfang/griffon",
+            "Tremor Armadillo/roller_beetle",
+            "Shimmerwing/skyscale"),
+        "Istani Isles" -> Set(
+            "Dzalana Ice Scale/raptor", "Lahtenda Bog Hunter/raptor", "Striped Jarin/raptor",
+            "Issnur Long Hair/springer", "Primeval/springer", "Sargol Thunderer/springer",
+            "Oceanic Broadtail/skimmer", "Primus Beta/skimmer", "Stardrift/skimmer",
+            "Ceylon Cut/jackal", "Iceflow/jackal", "Primeval/jackal",
+            "Exalted Sky Sentry/griffon", "Istani Bald/griffon", "Sky Bandit/griffon"),
+        "Mad Realm Mounts" -> Set(
+            "Mad Realm Raptor/raptor",
+            "Mad Realm Springer/springer",
+            "Mad Realm Skimmer/skimmer",
+            "Mad Realm Jackal/jackal",
+            "Mad Realm Griffon/griffon"),
+        "Mount Adoption" -> Set(
+            "Canyon Spiketail/raptor", "Coastal Spiketail/raptor", "Flamelander/raptor", "Savannah Monitor/raptor", "Storm Ridge/raptor", "Striped Tri-horn/raptor",
+            "Arctic Jerboa/springer", "Desert Lop/springer", "Elonian Jackalope/springer", "Primal Hare/springer", "Tawny Hare/springer", "Windy Spot/springer",
+            "Bright Ringfin/skimmer", "Dajkah Lantern/skimmer", "Oasis Skate/skimmer", "Oceanic Ray/skimmer", "River Moth Wing/skimmer", "Spined Longtail/skimmer",
+            "Banded Mystic/jackal", "Crowned Ancient/jackal", "Polished Stone/jackal", "Pyroclast/jackal", "Stardust/jackal", "Twin Sands/jackal",
+            "Badlands Stalker/griffon", "Clouded Corvus/griffon", "Fire Pinion/griffon", "Highlands Harrier/griffon", "Spotted Sylph/griffon", "Starbound/griffon"),
+        "New Horizons" -> Set(
+            "Lithosol/raptor", "Vital Geode/raptor",
+            "Cascade Heeler/springer", "Maguma Jackrabbit/springer",
+            "Luminous Ray/skimmer",
+            "Fulgurite Ridgeback/jackal", "Sun Stalker/jackal",
+            "Crowned Skyfisher/griffon",
+            "Arctic Razor/roller_beetle", "Deep Desert Scarab/roller_beetle",
+            "Savage Gladiator/warclaw", "Starclaw/warclaw",
+            "Broad-Horn Bull/skyscale", "Glademire/skyscale", "Incarnate Flame/skyscale"),
+        "Shiverpeaks Mounts" -> Set(
+            "Shiverpeaks Raptor/raptor",
+            "Shiverpeaks Springer/springer",
+            "Shiverpeaks Skimmer/skimmer",
+            "Shiverpeaks Jackal/jackal",
+            "Shiverpeaks Griffon/griffon"),
         "Skyscale Ascension" -> Set(
             "Caldera Skyscale/skyscale",
             "Axejaw Skyscale/skyscale",
             "Flare-Marked Skyscale/skyscale",
             "Bioluminescent Skyscale/skyscale",
-            "Branded Skyscale/skyscale")
+            "Branded Skyscale/skyscale"),
+        "Spooky Mounts" -> Set(
+            "Spooky Raptor/raptor",
+            "Spooky Springer/springer",
+            "Spooky Skimmer/skimmer",
+            "Spooky Jackal/jackal",
+            "Spooky Griffon/griffon"),
+        "Warclaw Frontline" -> Set(
+            "Assault Warclaw/warclaw",
+            "Branded Warclaw/warclaw",
+            "Embermane Warclaw/warclaw",
+            "Outrider Warclaw/warclaw",
+            "Vanguard Warclaw/warclaw")
     )
 
 }
