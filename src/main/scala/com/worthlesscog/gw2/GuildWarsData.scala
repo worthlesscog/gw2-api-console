@@ -8,6 +8,7 @@ object GuildWarsData {
         "Awakened" -> Set("Embalm", "Sarcophagus", "Scourge", "Tar", "Urn", "Vabbian Bronze"),
         "Bloodstone" -> Set("Bloodstone Coral", "Bloodstone Dark Coral", "Bloodstone Dark Indigo", "Bloodstone Dark Violet", "Bloodstone Indigo", "Bloodstone Violet"),
         "Blue Shift" -> Set("Baby Blue", "Blue Steel", "Ghost", "Lapis", "Phthalo Blue", "Powder Blue", "Resolution", "Valor", "Zaffre"),
+        "Charr" -> Set("Gladium", "Godless", "Legionnaire", "Searing", "Tribune", "Warband"),
         "Crimson Lion" -> Set("Aureus", "Crimson Lion", "Golden Lion", "Imperial Gold", "Imperial Red", "Rosewood"),
         "Deathly" -> Set("Acid", "Acrid", "Algae", "Caustic", "Swampblack", "Toxin"),
         "Elonian Beasts" -> Set("Choya", "Desert Harpy", "Hydra", "Iboga", "Jacaranda", "Sand Shark"),
