@@ -24,6 +24,7 @@ object GuildWarsData {
         "Mad King" -> Set("Carnage Orange", "Crushed Bone", "Eerie Purple", "Ember Red", "Harrowing Maroon Dye", "Ominous Yellow"),
         "Metallurgic" -> Set("Amenity", "Fling", "Onset", "Perseverance", "Prosperity", "Recall"),
         "Mordremoth" -> Set("Abyssal Forest", "Auric", "Arid", "Bloom", "Jungle", "Nightmare"),
+        "Norn" -> Set("Alemoot", "Havroun", "Legend", "Hunt", "Exodus", "Spirits"),
         "Primordus" -> Set("Bloody Red", "Destroyer Orange", "Incandescent", "Magma", "Scorched", "Sunfire Lava"),
         "Sacred" -> Set("Radiant Gold", "Cerulean Sky", "Dawn", "Cerulean Night", "Radiant Brass", "Celestial Blue"),
         "Shadow" -> Set("Shadow Abyss", "Shadow Blue", "Shadow Green", "Shadow Magenta", "Shadow Orange", "Shadow Purple", "Shadow Red", "Shadow Turquoise", "Shadow Violet", "Shadow Yellow"),
