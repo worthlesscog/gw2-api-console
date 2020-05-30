@@ -6,6 +6,9 @@ object GuildWarsData {
 
     val dyeSets = SortedMap(
         "Awakened" -> Set("Embalm", "Sarcophagus", "Scourge", "Tar", "Urn", "Vabbian Bronze"),
+        "Black Lion Canister - Blue" -> Set("Vista", "Alpine", "Kyanite", "Blue Lion"),
+        "Black Lion Canister - Green" -> Set("Canopy", "Growth", "Underworld", "Green Lion"),
+        "Black Lion Canister - Red" -> Set("Garnet", "Watermelon", "Infernal", "Red Lion"),
         "Bloodstone" -> Set("Bloodstone Coral", "Bloodstone Dark Coral", "Bloodstone Dark Indigo", "Bloodstone Dark Violet", "Bloodstone Indigo", "Bloodstone Violet"),
         "Blue Shift" -> Set("Baby Blue", "Blue Steel", "Ghost", "Lapis", "Phthalo Blue", "Powder Blue", "Resolution", "Valor", "Zaffre"),
         "Charr" -> Set("Gladium", "Godless", "Legionnaire", "Searing", "Tribune", "Warband"),
@@ -44,7 +47,8 @@ object GuildWarsData {
             "Jackal/jackal",
             "Griffon/griffon",
             "Roller Beetle/roller_beetle",
-            "Skyscale/skyscale"),
+            "Skyscale/skyscale",
+            "Warclaw/warclaw"),
         "Awakened Mounts" -> Set(
             "Awakened Raptor/raptor",
             "Awakened Springer/springer",
@@ -63,6 +67,15 @@ object GuildWarsData {
             "Cozy Wintersday Skimmer/skimmer",
             "Cozy Wintersday Jackal/jackal",
             "Cozy Wintersday Griffon/griffon"),
+        "Curious Creatures" -> Set(
+            "Archaius Sprinter/raptor", "Bioluminescent Raptor/raptor",
+            "Vital Geode/springer",
+            "Volcanic Ray/skimmer",
+            "Darkmist Moorhound/jackal", "Sleek Dunerunner/jackal",
+            "Gendarren Hawkeye/griffon", "Lithosol/griffon",
+            "Awakened Roller Beetle/roller_beetle", "Luminous Roller/roller_beetle",
+            "Exalted Mists Champion/warclaw", "Vigilant Saberclaw/warclaw",
+            "Frostsoul Skyscale/skyscale", "Moth-Marked Skyscale/skyscale", "Venomous Greathorn/skyscale"),
         "Desert Racer" -> Set(
             "Ntouka Snakescale/raptor", "Starscale/raptor",
             "Kourna Jackrabbit/springer", "Painted Mesa/springer",
@@ -91,13 +104,14 @@ object GuildWarsData {
             "Kournan Bright-Tail/griffon", "Primeval/griffon", "Arctic Icewing/griffon",
             "Ntouka Snakeshell/roller_beetle", "Starshell/roller_beetle"),
         "Gem Store" -> Set(
-            "Dreadnought/raptor", "Gallant Lightbearer/raptor", "Resplendent Avialan/raptor",
-            "Summit Wildhorn/springer", "Sun Temple Gecko/springer",
+            "Dreadnought/raptor", "Gallant Lightbearer/raptor", "Resplendent Avialan/raptor", "Super Outlaw/raptor",
+            "Summit Wildhorn/springer", "Sun Temple Gecko/springer", "Infernal Horror/springer",
             "Magnificent Hummingbird/skimmer", "Umbral Demon/skimmer",
-            "Reforged Warhound/jackal", "Shrine Guardian/jackal",
-            "Grand Lion/griffon", "Nightfang/griffon",
+            "Reforged Warhound/jackal", "Shrine Guardian/jackal", "Primal Spirit/jackal",
+            "Grand Lion/griffon", "Nightfang/griffon", "Sacred Pegasus/griffon",
             "Tremor Armadillo/roller_beetle",
-            "Shimmerwing/skyscale"),
+            "Shimmerwing/skyscale",
+            "War-Torn Marauder/warclaw"),
         "Istani Isles" -> Set(
             "Dzalana Ice Scale/raptor", "Lahtenda Bog Hunter/raptor", "Striped Jarin/raptor",
             "Issnur Long Hair/springer", "Primeval/springer", "Sargol Thunderer/springer",
@@ -110,6 +124,15 @@ object GuildWarsData {
             "Mad Realm Skimmer/skimmer",
             "Mad Realm Jackal/jackal",
             "Mad Realm Griffon/griffon"),
+        "Mistborn" -> Set(
+            "Crested Plainsrunner/raptor", "Primeval/raptor",
+            "Caledon Short-Tail/springer", "Exalted Ley Vaulter/springer",
+            "Lithosol/skimmer",
+            "Lucent Sands/jackal",
+            "Luminous Hunter/griffon", "Point-Tipped Corvus/griffon",
+            "Branded Roller Beetle/roller_beetle", "Nautiloid/roller_beetle",
+            "Iceforged Reaver/warclaw", "Stormclaw/warclaw",
+            "Cozy Wintersday Skyscale/skyscale", "Speckled Shortfang/skyscale", "Stripe-Winged Skyscale/skyscale"),
         "Mount Adoption" -> Set(
             "Canyon Spiketail/raptor", "Coastal Spiketail/raptor", "Flamelander/raptor", "Savannah Monitor/raptor", "Storm Ridge/raptor", "Striped Tri-horn/raptor",
             "Arctic Jerboa/springer", "Desert Lop/springer", "Elonian Jackalope/springer", "Primal Hare/springer", "Tawny Hare/springer", "Windy Spot/springer",
@@ -118,7 +141,7 @@ object GuildWarsData {
             "Badlands Stalker/griffon", "Clouded Corvus/griffon", "Fire Pinion/griffon", "Highlands Harrier/griffon", "Spotted Sylph/griffon", "Starbound/griffon"),
         "New Horizons" -> Set(
             "Lithosol/raptor", "Vital Geode/raptor",
-            "Cascade Heeler/springer", "Maguma Jackrabbit/springer",
+            "Cascade Heeler/springer", "Maguuma Jackrabbit/springer",
             "Luminous Ray/skimmer",
             "Fulgurite Ridgeback/jackal", "Sun Stalker/jackal",
             "Crowned Skyfisher/griffon",
