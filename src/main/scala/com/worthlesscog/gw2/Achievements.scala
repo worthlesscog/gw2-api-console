@@ -64,6 +64,9 @@ case class SkinProgress(
 case class TextProgress(
     `type`: String,
     text: Option[String]) extends AchievementProgress
+case class UnknownProgress() extends AchievementProgress {
+    def `type` = "API data bad"
+}
 
 object AchievementProtocols extends DefaultJsonProtocol {
 
@@ -89,16 +92,19 @@ object AchievementProtocols extends DefaultJsonProtocol {
     implicit val fmtMinipetProgress = jsonFormat2(MinipetProgress)
     implicit val fmtSkinProgress = jsonFormat2(SkinProgress)
     implicit val fmtTextProgress = jsonFormat2(TextProgress)
+    implicit val fmtUnknownProgress = jsonFormat0(UnknownProgress)
 
     implicit object AchievementProgressFormat extends RootJsonFormat[AchievementProgress] {
         def write(o: AchievementProgress) = o.toJson
 
-        def read(v: JsValue) = v.asJsObject.getFields("type") match {
-            case Seq(JsString("Item"))    => v.convertTo[ItemProgress]
-            case Seq(JsString("Minipet")) => v.convertTo[MinipetProgress]
-            case Seq(JsString("Skin"))    => v.convertTo[SkinProgress]
-            case Seq(JsString("Text"))    => v.convertTo[TextProgress]
-        }
+        def read(v: JsValue) =
+            v.asJsObject.getFields("type") match {
+                case Seq(JsString("Item"))    => v.convertTo[ItemProgress]
+                case Seq(JsString("Minipet")) => v.convertTo[MinipetProgress]
+                case Seq(JsString("Skin"))    => v.convertTo[SkinProgress]
+                case Seq(JsString("Text"))    => v.convertTo[TextProgress]
+                case Seq()                    => v.convertTo[UnknownProgress]
+            }
     }
 
     implicit val fmtAchievement = jsonFormat13(Achievement)
